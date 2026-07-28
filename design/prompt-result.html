@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>티타임은 즐거워 - 결과 확인</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#dce9ff",
+                        "error": "#ba1a1a",
+                        "surface-container": "#e5eeff",
+                        "primary": "#091426",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#bcc7de",
+                        "on-primary-fixed": "#111c2d",
+                        "on-tertiary-fixed-variant": "#4f319c",
+                        "on-primary-fixed-variant": "#3c475a",
+                        "on-surface": "#0b1c30",
+                        "secondary": "#4648d4",
+                        "inverse-surface": "#213145",
+                        "primary-fixed-dim": "#bcc7de",
+                        "on-primary-container": "#8590a6",
+                        "primary-fixed": "#d8e3fb",
+                        "on-secondary": "#ffffff",
+                        "surface-container-highest": "#d3e4fe",
+                        "secondary-fixed": "#e1e0ff",
+                        "surface": "#f8f9ff",
+                        "surface-bright": "#f8f9ff",
+                        "on-secondary-fixed-variant": "#2f2ebe",
+                        "tertiary": "#19004b",
+                        "on-tertiary-fixed": "#21005e",
+                        "tertiary-container": "#30037d",
+                        "on-tertiary-container": "#9a7eec",
+                        "secondary-fixed-dim": "#c0c1ff",
+                        "on-secondary-fixed": "#07006c",
+                        "on-surface-variant": "#45474c",
+                        "tertiary-fixed-dim": "#cebdff",
+                        "surface-tint": "#545f73",
+                        "surface-dim": "#cbdbf5",
+                        "on-error-container": "#93000a",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#e8ddff",
+                        "secondary-container": "#6063ee",
+                        "primary-container": "#1e293b",
+                        "surface-variant": "#d3e4fe",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-tertiary": "#ffffff",
+                        "background": "#f8f9ff",
+                        "outline-variant": "#c5c6cd",
+                        "surface-container-low": "#eff4ff",
+                        "on-background": "#0b1c30",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "outline": "#75777d",
+                        "on-secondary-container": "#fffbff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "sm": "8px",
+                        "2xl": "48px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "xs": "4px",
+                        "3xl": "64px",
+                        "base": "4px",
+                        "gutter": "24px",
+                        "xl": "32px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Geist"],
+                        "label-md": ["Geist"],
+                        "headline-lg-mobile": ["Geist"],
+                        "code": ["Geist"],
+                        "headline-md": ["Geist"],
+                        "display": ["Geist"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "title-lg": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "code": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        /* Hide scrollbar for textarea but keep functionality */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Toast animation */
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translate(-50%, 20px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
+        .toast-enter {
+            animation: slideUpFade 0.3s ease-out forwards;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background antialiased flex flex-col h-[884px] overflow-hidden md:hidden">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky bg-surface dark:bg-surface-dim border-b border-outline-variant shadow-sm z-10 flex-none">
+<div class="flex items-center justify-between px-margin-mobile h-16">
+<button aria-label="Go back" class="flex items-center justify-center p-2 rounded-full hover:bg-surface-container-high transition-colors active:scale-95 duration-100 text-on-surface-variant dark:text-outline">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed truncate px-4 text-center">결과 확인</h1>
+<div class="w-10"></div> <!-- Spacer for centering -->
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col px-margin-mobile py-lg overflow-hidden gap-md">
+<!-- Metadata Header -->
+<div class="flex justify-between items-end flex-none">
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant">생성된 결과</p>
+<p class="font-body-sm text-body-sm text-primary-container mt-1">모델: Gemini 1.5 Pro</p>
+</div>
+<div class="flex gap-2">
+<button aria-label="Copy to clipboard" class="flex items-center justify-center p-2 rounded-full bg-surface-container hover:bg-surface-container-high transition-colors active:scale-95 h-[44px] w-[44px] text-primary" id="copyBtn">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">content_copy</span>
+</button>
+<button aria-label="Like output" class="flex items-center justify-center p-2 rounded-full bg-surface-container hover:bg-surface-container-high transition-colors active:scale-95 h-[44px] w-[44px] text-primary" id="likeBtn">
+<span class="material-symbols-outlined" id="likeIcon" style="font-variation-settings: 'FILL' 0;">favorite</span>
+</button>
+</div>
+</div>
+<!-- Editable Text Area Container (Bento/Card style) -->
+<div class="flex-1 relative bg-surface-container-lowest rounded-2xl border border-outline-variant shadow-sm overflow-hidden flex flex-col group transition-shadow focus-within:ring-2 focus-within:ring-secondary focus-within:border-transparent">
+<!-- Decorative Lavender Accent -->
+<div class="h-1 w-full bg-secondary-fixed"></div>
+<textarea class="flex-1 w-full p-4 bg-transparent border-none resize-none outline-none font-body-md text-body-md text-on-surface no-scrollbar h-full" placeholder="생성된 내용이 여기에 나타납니다...">디자인 시스템은 고성능 프롬프트 엔지니어링 및 AI 워크플로우 관리를 위해 설계되었습니다. 브랜드 개성은 정밀하고 지적이며 세련된 것으로, 사용자의 창의적이고 기술적인 결과물이 중심을 차지하도록 물러나는 "조용한" 인터페이스를 제공하는 것을 목표로 합니다.
+
+미학은 색조 미니멀리즘에 중점을 둔 기업 / 모던 스타일을 따릅니다. 여백, 의도적인 콘텐츠 계층 구조 및 미묘한 깊이를 활용하여 복잡한 정보를 구성합니다. 감정적인 목표는 초기 AI 도구의 혼란스러운 "해커" 미학에서 벗어나 전문적이고 신뢰할 수 있는 작업 공간으로 나아가는 집중된 차분함을 불러일으키는 것입니다.
+
+디자인 시스템은 기본 8 간격 비율의 유체 그리드 모델을 사용합니다. 깊이는 주변 그림자로 보완된 톤 레이어를 통해 전달됩니다.</textarea>
+</div>
+</main>
+<!-- Bottom Action Bar (Contextual FAB replacements for transactional screen) -->
+<footer class="flex-none bg-surface-container dark:bg-surface-container-lowest border-t border-outline-variant shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] pb-safe">
+<div class="px-margin-mobile py-4 flex flex-col gap-sm">
+<button class="w-full h-[44px] bg-primary text-on-primary rounded-xl font-label-md text-label-md flex items-center justify-center gap-2 active:scale-[0.98] transition-transform shadow-sm">
+<span class="material-symbols-outlined text-[20px]">refresh</span>
+                다시 실행
+            </button>
+<div class="flex gap-sm w-full">
+<button class="flex-1 h-[44px] bg-surface-container-highest text-primary rounded-xl font-label-md text-label-md flex items-center justify-center gap-2 active:scale-[0.98] transition-transform">
+<span class="material-symbols-outlined text-[18px]">save_alt</span>
+                    TXT로 저장
+                </button>
+<button class="flex-1 h-[44px] bg-surface-container-highest text-primary rounded-xl font-label-md text-label-md flex items-center justify-center gap-2 active:scale-[0.98] transition-transform">
+<span class="material-symbols-outlined text-[18px]">mail</span>
+                    나에게 이메일 발송
+                </button>
+</div>
+</div>
+</footer>
+<!-- Toast Notification -->
+<div class="fixed bottom-32 left-1/2 transform -translate-x-1/2 bg-inverse-surface text-inverse-on-surface px-4 py-3 rounded-lg font-label-md text-label-md shadow-lg flex items-center gap-2 opacity-0 pointer-events-none z-50" id="toast">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+        클립보드에 복사되었습니다
+    </div>
+<script>
+        // Like Toggle Logic
+        const likeBtn = document.getElementById('likeBtn');
+        const likeIcon = document.getElementById('likeIcon');
+        let isLiked = false;
+
+        likeBtn.addEventListener('click', () => {
+            isLiked = !isLiked;
+            if (isLiked) {
+                likeIcon.style.fontVariationSettings = "'FILL' 1";
+                likeIcon.classList.add('text-error');
+                likeBtn.classList.add('bg-error-container');
+            } else {
+                likeIcon.style.fontVariationSettings = "'FILL' 0";
+                likeIcon.classList.remove('text-error');
+                likeBtn.classList.remove('bg-error-container');
+            }
+        });
+
+        // Copy Toast Logic
+        const copyBtn = document.getElementById('copyBtn');
+        const toast = document.getElementById('toast');
+        let toastTimeout;
+
+        copyBtn.addEventListener('click', () => {
+            // Clear existing timeout if multiple clicks
+            if (toastTimeout) clearTimeout(toastTimeout);
+            
+            // Show toast
+            toast.classList.remove('opacity-0');
+            toast.classList.add('toast-enter');
+            
+            // Hide toast after 2.5s
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('toast-enter');
+                toast.classList.add('opacity-0');
+            }, 2500);
+        });
+    </script>
+</body></html>

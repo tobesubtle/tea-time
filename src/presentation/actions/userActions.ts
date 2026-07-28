@@ -1,0 +1,46 @@
+'use server';
+
+import { redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
+import { SupabaseUserRepository } from '@/infrastructure/repositories/SupabaseUserRepository';
+
+import { UserRole } from '@/domain/entities/User';
+
+const userRepository = new SupabaseUserRepository();
+
+export async function createUserAction(prevState: any, formData: FormData) {
+  const name = formData.get('name') as string;
+  const email = formData.get('email') as string;
+  const role = (formData.get('role') as UserRole) || 'editor';
+  const sendInvite = formData.get('send_invite') === 'on';
+
+  if (!email) {
+    return { error: '이메일 주소는 필수입니다.' };
+  }
+
+  try {
+    await userRepository.createUser({
+      name,
+      email,
+      role,
+    });
+  } catch (err: any) {
+    return { error: err.message || '사용자 생성 중 오류가 발생했습니다.' };
+  }
+
+  revalidatePath('/admin/users');
+  redirect('/admin/users');
+}
+
+export async function deleteUserAction(formData: FormData) {
+  const userId = formData.get('userId') as string;
+
+  if (!userId) return;
+
+  try {
+    await userRepository.deleteUser(userId);
+    revalidatePath('/admin/users');
+  } catch (err: any) {
+    console.error('Failed to delete user:', err);
+  }
+}

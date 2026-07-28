@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>사용자 추가 - Gemini Architect</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#d3e4fe",
+                        "surface-container-high": "#dce9ff",
+                        "on-surface": "#0b1c30",
+                        "on-surface-variant": "#45474c",
+                        "primary-fixed-dim": "#bcc7de",
+                        "tertiary-fixed": "#e8ddff",
+                        "on-primary-fixed": "#111c2d",
+                        "on-secondary-fixed-variant": "#2f2ebe",
+                        "surface-tint": "#545f73",
+                        "outline-variant": "#c5c6cd",
+                        "on-error": "#ffffff",
+                        "on-primary-container": "#8590a6",
+                        "outline": "#75777d",
+                        "on-primary-fixed-variant": "#3c475a",
+                        "primary": "#091426",
+                        "secondary-fixed": "#e1e0ff",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-container": "#9a7eec",
+                        "on-background": "#0b1c30",
+                        "secondary-container": "#6063ee",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#f8f9ff",
+                        "secondary": "#4648d4",
+                        "on-secondary-container": "#fffbff",
+                        "surface-container-low": "#eff4ff",
+                        "background": "#f8f9ff",
+                        "tertiary-fixed-dim": "#cebdff",
+                        "surface-dim": "#cbdbf5",
+                        "surface-container": "#e5eeff",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-variant": "#d3e4fe",
+                        "surface": "#f8f9ff",
+                        "tertiary-container": "#30037d",
+                        "inverse-primary": "#bcc7de",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#c0c1ff",
+                        "on-tertiary-fixed": "#21005e",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#07006c",
+                        "primary-fixed": "#d8e3fb",
+                        "tertiary": "#19004b",
+                        "inverse-on-surface": "#eaf1ff",
+                        "primary-container": "#1e293b",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed-variant": "#4f319c",
+                        "inverse-surface": "#213145"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "sm": "8px",
+                        "base": "4px",
+                        "md": "16px",
+                        "3xl": "64px",
+                        "xl": "32px",
+                        "lg": "24px",
+                        "margin-mobile": "16px",
+                        "2xl": "48px",
+                        "xs": "4px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "label-md": ["Geist"],
+                        "headline-md": ["Geist"],
+                        "headline-lg-mobile": ["Geist"],
+                        "body-md": ["Inter"],
+                        "display": ["Geist"],
+                        "body-sm": ["Inter"],
+                        "headline-lg": ["Geist"],
+                        "code": ["Geist"],
+                        "title-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "code": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "title-lg": ["20px", { "lineHeight": "28px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen font-body-md antialiased flex flex-col">
+<!-- Nav suppression applied due to transactional intent ('Add User' form with back button) -->
+<!-- Header -->
+<header class="bg-surface border-b border-outline-variant w-full top-0 sticky z-50">
+<div class="max-w-3xl mx-auto px-margin-mobile md:px-lg h-16 flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors active:scale-95 text-on-surface-variant">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary md:font-headline-md md:text-headline-md flex-1 text-center md:text-left truncate">사용자 추가</h1>
+<div class="w-10"></div> <!-- Spacer for mobile centering -->
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 w-full max-w-3xl mx-auto px-margin-mobile md:px-lg py-xl pb-32">
+<div class="bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/30 overflow-hidden">
+<div class="p-lg md:p-xl space-y-xl">
+<p class="font-body-md text-body-md text-on-surface-variant">
+                    새로운 팀 멤버를 시스템에 초대합니다. 역할을 지정하여 권한을 제어하세요.
+                </p>
+<form class="space-y-lg">
+<!-- Name Field -->
+<div class="space-y-sm">
+<label class="block font-label-md text-label-md text-on-surface" for="name">이름</label>
+<input class="w-full bg-surface-bright border border-outline-variant rounded-lg px-4 py-3 h-[44px] focus:ring-2 focus:ring-secondary focus:border-secondary transition-shadow font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/50" id="name" name="name" placeholder="홍길동" type="text"/>
+</div>
+<!-- Email Field -->
+<div class="space-y-sm">
+<label class="block font-label-md text-label-md text-on-surface" for="email">이메일 주소</label>
+<input class="w-full bg-surface-bright border border-outline-variant rounded-lg px-4 py-3 h-[44px] focus:ring-2 focus:ring-secondary focus:border-secondary transition-shadow font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/50" id="email" name="email" placeholder="hong@company.com" type="email"/>
+</div>
+<!-- Role Selection (Radio Group) -->
+<div class="space-y-sm pt-md">
+<label class="block font-label-md text-label-md text-on-surface mb-2">역할 부여</label>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-md">
+<!-- Editor Role -->
+<label class="relative flex cursor-pointer rounded-xl border border-outline-variant bg-surface-bright p-4 shadow-sm hover:bg-surface-container-low transition-colors has-[:checked]:border-secondary has-[:checked]:ring-1 has-[:checked]:ring-secondary">
+<div class="flex w-full items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-container-high text-on-surface-variant">
+<span class="material-symbols-outlined">edit_document</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-semibold">편집자</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">콘텐츠 작성 및 수정 권한</p>
+</div>
+</div>
+<input checked="" class="h-5 w-5 border-outline text-secondary focus:ring-secondary" name="role" type="radio" value="editor"/>
+</div>
+</label>
+<!-- Admin Role -->
+<label class="relative flex cursor-pointer rounded-xl border border-outline-variant bg-surface-bright p-4 shadow-sm hover:bg-surface-container-low transition-colors has-[:checked]:border-secondary has-[:checked]:ring-1 has-[:checked]:ring-secondary">
+<div class="flex w-full items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-tertiary-fixed text-on-tertiary-fixed">
+<span class="material-symbols-outlined">shield_person</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-semibold">관리자</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">모든 시스템 접근 및 설정</p>
+</div>
+</div>
+<input class="h-5 w-5 border-outline text-secondary focus:ring-secondary" name="role" type="radio" value="admin"/>
+</div>
+</label>
+</div>
+</div>
+<!-- Invitation Option -->
+<div class="pt-lg border-t border-outline-variant/30 mt-lg">
+<label class="flex items-start gap-3 cursor-pointer group">
+<div class="flex h-6 items-center">
+<input checked="" class="h-5 w-5 rounded border-outline text-secondary focus:ring-secondary" id="send_invite" type="checkbox"/>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface group-hover:text-secondary transition-colors">이메일로 초대 링크 전송</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-1">선택 시, 사용자가 직접 임시 비밀번호를 설정하도록 안내 메일을 발송합니다.</span>
+</div>
+</label>
+</div>
+</form>
+</div>
+<!-- Form Actions -->
+<div class="bg-surface-container-low px-lg py-md border-t border-outline-variant/30 flex justify-end gap-3 sticky bottom-0">
+<button class="h-[44px] px-6 font-label-md text-label-md text-on-surface-variant bg-surface-bright hover:bg-surface-container-high border border-outline-variant rounded-lg transition-colors" type="button">
+                    취소
+                </button>
+<button class="h-[44px] px-8 font-label-md text-label-md text-on-primary bg-primary hover:bg-inverse-surface rounded-lg shadow-sm hover:shadow-md transition-all active:scale-95 flex items-center gap-2" type="submit">
+<span class="material-symbols-outlined text-[20px]">person_add</span>
+                    등록하기
+                </button>
+</div>
+</div>
+</main>
+</body></html>

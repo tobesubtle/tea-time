@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>관리자 - 프롬프트 관리</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#e1e3e4",
+                        "on-primary-fixed": "#091d2e",
+                        "on-surface-variant": "#43474c",
+                        "surface-tint": "#4e6073",
+                        "on-surface": "#191c1d",
+                        "surface-dim": "#d9dadb",
+                        "on-primary-container": "#96a9be",
+                        "tertiary": "#252912",
+                        "secondary-container": "#ffca98",
+                        "secondary-fixed-dim": "#f0bd8b",
+                        "secondary-fixed": "#ffdcbd",
+                        "surface-bright": "#f8f9fa",
+                        "inverse-surface": "#2e3132",
+                        "on-background": "#191c1d",
+                        "primary-container": "#2c3e50",
+                        "on-secondary-fixed": "#2c1600",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-container": "#a6aa89",
+                        "primary": "#162839",
+                        "tertiary-fixed": "#e1e6c2",
+                        "inverse-on-surface": "#f0f1f2",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed-variant": "#36485b",
+                        "tertiary-container": "#3b3f25",
+                        "on-tertiary-fixed": "#1a1d07",
+                        "on-error": "#ffffff",
+                        "primary-fixed": "#d1e4fb",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed-variant": "#623f18",
+                        "outline-variant": "#c4c6cd",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#45492f",
+                        "on-tertiary": "#ffffff",
+                        "background": "#f8f9fa",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-container": "#7a532a",
+                        "surface-container": "#edeeef",
+                        "surface-container-low": "#f3f4f5",
+                        "inverse-primary": "#b5c8df",
+                        "secondary": "#7d562d",
+                        "tertiary-fixed-dim": "#c5c9a7",
+                        "surface": "#f8f9fa",
+                        "primary-fixed-dim": "#b5c8df",
+                        "on-primary": "#ffffff",
+                        "outline": "#74777d",
+                        "surface-container-high": "#e7e8e9",
+                        "surface-container-highest": "#e1e3e4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "xl": "40px",
+                        "margin-desktop": "64px",
+                        "sm": "8px",
+                        "gutter": "20px",
+                        "xs": "4px",
+                        "unit": "4px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "body-lg": ["Noto Sans"],
+                        "title-md": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "headline-xl": ["Hanken Grotesk"],
+                        "body-md": ["Noto Sans"],
+                        "label-sm": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "title-md": ["20px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-xl": ["40px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md text-body-md antialiased pt-16 pb-20 md:pb-0">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 w-full fixed top-0 z-50 bg-surface border-b border-outline-variant flat no shadows">
+<div class="flex items-center gap-4">
+<button aria-label="Menu" class="material-symbols-outlined text-primary hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 duration-100" data-icon="menu">menu</button>
+<span class="font-headline-lg text-headline-lg font-bold text-primary">티타임은 즐거워</span>
+</div>
+<!-- Desktop Navigation (Hidden on Mobile) -->
+<nav class="hidden md:flex gap-8 items-center h-full">
+<a class="h-full flex items-center px-2 text-on-surface-variant hover:bg-surface-container-high transition-colors font-title-md text-title-md" href="#">템플릿</a>
+<a class="h-full flex items-center px-2 text-on-surface-variant hover:bg-surface-container-high transition-colors font-title-md text-title-md" href="#">히스토리</a>
+<a class="h-full flex items-center px-2 text-secondary border-b-2 border-secondary font-title-md text-title-md" href="#">관리자</a>
+</nav>
+<div class="flex items-center">
+<div class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden border border-outline-variant hover:bg-surface-container-high transition-colors cursor-pointer active:scale-95 duration-100">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="A highly detailed close up of a stylized, modern minimalist 3D avatar of a professional user. The avatar is rendered in soft, high-key lighting with a clean white and deep navy blue color palette, matching the modern corporate aesthetic. The background is a soft, pristine light gray." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXi61S7jZIfISGGGvq-HPRZeFGkX-BkcTneNVtqWJkyA84lKmCGu1W2Yys3j1uwUpLS_OLuqsq_XWjrCp7BPMdLHFFrUX9dlhBCoS258OH7O7_qWEmAJ8PuHKriAJjyDzIYXobCQRTCx3Sc-QLSMtUwYvRKnIbZ_OjNBrjnqQN0_c6ONdhi-Etac3k0awoJJYLze8HHAxtOLSlRbl5AB6b9sjQttbZZHvrMpNlvUqbTO770BzND6HV"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 w-full max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop py-lg flex flex-col gap-xl">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-outline-variant pb-4">
+<div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-primary">관리자 - 프롬프트 관리</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">시스템 내 모든 프롬프트 템플릿과 삭제된 데이터를 관리합니다.</p>
+</div>
+<div class="flex items-center gap-3 w-full md:w-auto">
+<div class="relative w-full md:w-64">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-outline text-on-surface" placeholder="입력해주세요" type="text"/>
+</div>
+</div>
+</div>
+<!-- Toolbar / Filters -->
+<div class="flex flex-wrap justify-between items-center gap-4 p-4 bg-surface-container-lowest rounded-lg border border-outline-variant shadow-sm transition-all hover:shadow-md">
+<div class="flex items-center gap-2">
+<span class="font-title-md text-title-md text-primary">필터:</span>
+<button class="px-4 py-1.5 rounded-full bg-tertiary text-on-tertiary font-label-sm text-label-sm flex items-center gap-1 transition-colors hover:bg-tertiary-container">
+<span class="material-symbols-outlined text-[16px]" data-icon="check">check</span>
+                    Soft Deleted (휴지통)
+                </button>
+<button class="px-4 py-1.5 rounded-full border border-outline-variant text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-container transition-colors">
+                    전체 보기
+                </button>
+</div>
+<div class="flex items-center gap-2 border-l border-outline-variant pl-4">
+<button class="px-4 py-2 bg-error text-on-error rounded-lg font-title-md text-title-md hover:bg-on-error-container transition-colors flex items-center gap-2 shadow-sm active:scale-95 duration-100">
+<span class="material-symbols-outlined" data-icon="delete_forever">delete_forever</span>
+                    영구 삭제
+                </button>
+</div>
+</div>
+<!-- Data Grid / List -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-md">
+<!-- Item 1 (Soft Deleted) -->
+<div class="group bg-surface-container-lowest rounded-lg border border-error-container p-md flex flex-col gap-4 shadow-sm hover:shadow-md hover:border-error transition-all relative overflow-hidden">
+<div class="absolute top-0 right-0 w-16 h-16 bg-error-container/30 rounded-bl-full -z-10 group-hover:scale-110 transition-transform"></div>
+<div class="flex justify-between items-start">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-outline font-mono">ID: USR-8891-AB</span>
+<h3 class="font-title-md text-title-md text-on-surface mt-1">주간 회의록 요약 템플릿</h3>
+</div>
+<input class="w-5 h-5 rounded border-outline-variant text-error focus:ring-error focus:ring-offset-0 bg-surface cursor-pointer" type="checkbox"/>
+</div>
+<div class="flex-1">
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">마케팅 팀 주간 회의 내용을 바탕으로 주요 액션 아이템과 결정 사항을 요약하는 프롬프트입니다.</p>
+</div>
+<div class="flex justify-between items-center pt-4 border-t border-outline-variant border-dashed">
+<div class="flex items-center gap-1 text-error">
+<span class="material-symbols-outlined text-[16px]" data-icon="auto_delete">auto_delete</span>
+<span class="font-label-sm text-label-sm">Deleted: 2023-10-24 14:30</span>
+</div>
+<button class="text-primary hover:text-primary-container font-label-sm text-label-sm underline">복구</button>
+</div>
+</div>
+<!-- Item 2 (Soft Deleted) -->
+<div class="group bg-surface-container-lowest rounded-lg border border-error-container p-md flex flex-col gap-4 shadow-sm hover:shadow-md hover:border-error transition-all relative overflow-hidden">
+<div class="absolute top-0 right-0 w-16 h-16 bg-error-container/30 rounded-bl-full -z-10 group-hover:scale-110 transition-transform"></div>
+<div class="flex justify-between items-start">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-outline font-mono">ID: USR-1024-XY</span>
+<h3 class="font-title-md text-title-md text-on-surface mt-1">고객 문의 응대 초안</h3>
+</div>
+<input class="w-5 h-5 rounded border-outline-variant text-error focus:ring-error focus:ring-offset-0 bg-surface cursor-pointer" type="checkbox"/>
+</div>
+<div class="flex-1">
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">불만 고객 대상 정중한 사과 및 보상 안내 메일 초안 작성용 프롬프트 (테스트용)</p>
+</div>
+<div class="flex justify-between items-center pt-4 border-t border-outline-variant border-dashed">
+<div class="flex items-center gap-1 text-error">
+<span class="material-symbols-outlined text-[16px]" data-icon="auto_delete">auto_delete</span>
+<span class="font-label-sm text-label-sm">Deleted: 2023-10-23 09:15</span>
+</div>
+<button class="text-primary hover:text-primary-container font-label-sm text-label-sm underline">복구</button>
+</div>
+</div>
+<!-- Item 3 (Soft Deleted) -->
+<div class="group bg-surface-container-lowest rounded-lg border border-error-container p-md flex flex-col gap-4 shadow-sm hover:shadow-md hover:border-error transition-all relative overflow-hidden">
+<div class="absolute top-0 right-0 w-16 h-16 bg-error-container/30 rounded-bl-full -z-10 group-hover:scale-110 transition-transform"></div>
+<div class="flex justify-between items-start">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-outline font-mono">ID: SYS-0001-AA</span>
+<h3 class="font-title-md text-title-md text-on-surface mt-1">오래된 시스템 프롬프트 V1</h3>
+</div>
+<input class="w-5 h-5 rounded border-outline-variant text-error focus:ring-error focus:ring-offset-0 bg-surface cursor-pointer" type="checkbox"/>
+</div>
+<div class="flex-1">
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">초기 런칭 시 사용되었던 기본 번역 템플릿. 현재는 V2로 대체되어 사용되지 않음.</p>
+</div>
+<div class="flex justify-between items-center pt-4 border-t border-outline-variant border-dashed">
+<div class="flex items-center gap-1 text-error">
+<span class="material-symbols-outlined text-[16px]" data-icon="auto_delete">auto_delete</span>
+<span class="font-label-sm text-label-sm">Deleted: 2023-09-01 11:00</span>
+</div>
+<button class="text-primary hover:text-primary-container font-label-sm text-label-sm underline">복구</button>
+</div>
+</div>
+<!-- Item 4 (Soft Deleted) -->
+<div class="group bg-surface-container-lowest rounded-lg border border-error-container p-md flex flex-col gap-4 shadow-sm hover:shadow-md hover:border-error transition-all relative overflow-hidden">
+<div class="absolute top-0 right-0 w-16 h-16 bg-error-container/30 rounded-bl-full -z-10 group-hover:scale-110 transition-transform"></div>
+<div class="flex justify-between items-start">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-outline font-mono">ID: USR-4422-ZZ</span>
+<h3 class="font-title-md text-title-md text-on-surface mt-1">블로그 포스팅 생성기</h3>
+</div>
+<input class="w-5 h-5 rounded border-outline-variant text-error focus:ring-error focus:ring-offset-0 bg-surface cursor-pointer" type="checkbox"/>
+</div>
+<div class="flex-1">
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">기술 블로그용 마크다운 형식의 포스팅을 생성하는 복잡한 프롬프트. 오류 발생으로 임시 삭제.</p>
+</div>
+<div class="flex justify-between items-center pt-4 border-t border-outline-variant border-dashed">
+<div class="flex items-center gap-1 text-error">
+<span class="material-symbols-outlined text-[16px]" data-icon="auto_delete">auto_delete</span>
+<span class="font-label-sm text-label-sm">Deleted: 2023-10-20 16:45</span>
+</div>
+<button class="text-primary hover:text-primary-container font-label-sm text-label-sm underline">복구</button>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center py-2 bg-surface shadow-lg border-t border-outline-variant rounded-t-xl md:hidden">
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container transition-all active:scale-90 duration-150 p-2 rounded-lg w-16">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="font-label-sm text-label-sm mt-1">템플릿</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container transition-all active:scale-90 duration-150 p-2 rounded-lg w-16">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-label-sm text-label-sm mt-1">히스토리</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary font-bold active:scale-90 duration-150 p-2 rounded-lg w-16">
+<span class="material-symbols-outlined" data-icon="admin_panel_settings" style="font-variation-settings: 'FILL' 1;">admin_panel_settings</span>
+<span class="font-label-sm text-label-sm mt-1 text-secondary">관리자</span>
+</button>
+</nav>
+</body></html>

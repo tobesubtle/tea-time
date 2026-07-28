@@ -1,0 +1,266 @@
+<!DOCTYPE html><html lang="ko" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>관리자 - 사용량 통계</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Design System Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#e1e3e4",
+                        "on-primary-fixed": "#091d2e",
+                        "on-surface-variant": "#43474c",
+                        "surface-tint": "#4e6073",
+                        "on-surface": "#191c1d",
+                        "surface-dim": "#d9dadb",
+                        "on-primary-container": "#96a9be",
+                        "tertiary": "#252912",
+                        "secondary-container": "#ffca98",
+                        "secondary-fixed-dim": "#f0bd8b",
+                        "secondary-fixed": "#ffdcbd",
+                        "surface-bright": "#f8f9fa",
+                        "inverse-surface": "#2e3132",
+                        "on-background": "#191c1d",
+                        "primary-container": "#2c3e50",
+                        "on-secondary-fixed": "#2c1600",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-container": "#a6aa89",
+                        "primary": "#162839",
+                        "tertiary-fixed": "#e1e6c2",
+                        "inverse-on-surface": "#f0f1f2",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed-variant": "#36485b",
+                        "tertiary-container": "#3b3f25",
+                        "on-tertiary-fixed": "#1a1d07",
+                        "on-error": "#ffffff",
+                        "primary-fixed": "#d1e4fb",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed-variant": "#623f18",
+                        "outline-variant": "#c4c6cd",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#45492f",
+                        "on-tertiary": "#ffffff",
+                        "background": "#f8f9fa",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-container": "#7a532a",
+                        "surface-container": "#edeeef",
+                        "surface-container-low": "#f3f4f5",
+                        "inverse-primary": "#b5c8df",
+                        "secondary": "#7d562d",
+                        "tertiary-fixed-dim": "#c5c9a7",
+                        "surface": "#f8f9fa",
+                        "primary-fixed-dim": "#b5c8df",
+                        "on-primary": "#ffffff",
+                        "outline": "#74777d",
+                        "surface-container-high": "#e7e8e9",
+                        "surface-container-highest": "#e1e3e4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "xl": "40px",
+                        "margin-desktop": "64px",
+                        "sm": "8px",
+                        "gutter": "20px",
+                        "xs": "4px",
+                        "unit": "4px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "body-lg": ["Noto Sans"],
+                        "title-md": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "headline-xl": ["Hanken Grotesk"],
+                        "body-md": ["Noto Sans"],
+                        "label-sm": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "title-md": ["20px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-xl": ["40px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&family=JetBrains+Mono:wght@500&family=Noto+Sans:wght@400&display=swap');
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans:wght@400&amp;display=swap" data-snapdom="injected-import"></head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md">
+<!-- TopAppBar -->
+<header class="bg-surface border-b border-outline-variant flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 w-full sticky top-0 z-40">
+<div class="flex items-center gap-md">
+<button class="md:hidden flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-full p-2">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<span class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg font-bold text-primary">티타임은 즐거워</span>
+</div>
+<!-- Desktop Navigation (Hidden on Mobile) -->
+<nav class="hidden md:flex items-center h-full gap-lg">
+<a class="h-full flex items-center text-on-surface-variant hover:bg-surface-container-high transition-colors px-md" href="#">템플릿</a>
+<a class="h-full flex items-center text-on-surface-variant hover:bg-surface-container-high transition-colors px-md" href="#">히스토리</a>
+<a class="h-full flex items-center text-secondary border-b-2 border-secondary font-bold px-md" href="#">관리자</a>
+</nav>
+<div class="flex items-center">
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-variant border border-outline-variant">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="A professional corporate headshot of a person, minimalist background, neutral lighting, matching a clean light-mode UI aesthetic, high quality, slightly soft focus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBI5Hz1RK-pDnu6U-Pych-lIA66o36Yp2liKdShtdHf3lFwnadm16B8I48vtKtxu6keYwfIM7CEj9jBW8t0rf8Zhb4ySzsfRIaaRwk0iHsiG8Kan8mhm1pdMtcp1wfJwOhmeI5lbtIqZjlQiAZgOBHDkRhorSCnFonvdrjI3Kq2AB8D6KDxCm9MOwDYvAHZwm11FQRO7nsY10FeOGXs3lIe5ysYu2UE6LU9lxX0Qzw2MH-wSJ8nXdHg">
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 w-full max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop py-xl space-y-xl pb-[100px] md:pb-xl">
+<!-- Header & Filter -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-md">
+<div>
+<h1 class="font-headline-xl text-headline-xl text-on-background">관리자 - 사용량 통계</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-sm">시스템 전반의 API 호출 및 토큰 사용 현황을 확인합니다.</p>
+</div>
+
+</div><div class="flex items-center bg-surface-container-low p-xs rounded-lg w-fit">
+  <button class="px-lg py-sm rounded-md bg-surface-container-lowest text-primary font-bold shadow-sm transition-all">
+    월별 조회
+  </button>
+  <button class="px-lg py-sm rounded-md text-on-surface-variant hover:bg-surface-container-high transition-all">
+    일별 조회
+  </button>
+</div><div class="flex items-center justify-center gap-md mt-lg bg-surface-container-lowest border border-outline-variant rounded-xl p-sm w-fit mx-auto shadow-sm">
+  <button class="flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-full p-1">
+    <span class="material-symbols-outlined">chevron_left</span>
+  </button>
+  <span class="font-title-md text-title-md text-on-surface px-md">2024년 5월</span>
+  <button class="flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-full p-1">
+    <span class="material-symbols-outlined">chevron_right</span>
+  </button>
+</div>
+<!-- Metrics Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md"><!-- Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg flex flex-col gap-lg shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start">
+<span class="font-title-md text-title-md text-on-surface">총 호출 횟수</span>
+<span class="material-symbols-outlined text-primary bg-primary-container text-on-primary-container p-sm rounded-lg">data_usage</span>
+</div>
+<div>
+<span class="font-headline-xl text-headline-xl text-primary">1,245,000</span>
+<div class="flex items-center gap-xs mt-xs text-secondary">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+<span class="font-label-sm text-label-sm">+12.5% vs 지난달</span>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg flex flex-col gap-lg shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start">
+<span class="font-title-md text-title-md text-on-surface">총 토큰 사용량</span>
+<span class="material-symbols-outlined text-primary bg-primary-container text-on-primary-container p-sm rounded-lg">memory</span>
+</div>
+<div>
+<span class="font-headline-xl text-headline-xl text-primary">45.2M</span>
+<div class="flex items-center gap-xs mt-xs text-secondary">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+<span class="font-label-sm text-label-sm">+8.2% vs 지난달</span>
+</div>
+</div>
+</div></div>
+<!-- Breakdown Chart/List -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-sm">
+<div class="flex justify-between items-center mb-lg">
+<h2 class="font-title-md text-title-md text-on-surface">사용자별 사용량 상세</h2>
+
+</div>
+<div class="space-y-md">
+<!-- List Header -->
+<div class="grid grid-cols-12 gap-sm font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant pb-sm px-sm">
+<div class="col-span-5 md:col-span-4">사용자</div>
+<div class="col-span-4 md:col-span-6">사용 비중 (토큰)</div>
+<div class="col-span-3 md:col-span-2 text-right">호출 수</div>
+</div>
+<!-- Row 1 -->
+<div class="grid grid-cols-12 gap-sm items-center py-sm px-sm hover:bg-surface-container-low transition-colors rounded-lg group">
+<div class="col-span-5 md:col-span-4 flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-label-sm">SJ</div>
+<span class="font-body-md text-body-md text-on-surface truncate">Steve Jobs</span>
+</div>
+<div class="col-span-4 md:col-span-6 flex items-center gap-sm">
+<div class="w-full bg-surface-variant rounded-full h-2">
+<div class="bg-secondary h-2 rounded-full" style="width: 45%"></div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant hidden md:inline-block">12.5M</span>
+</div>
+<div class="col-span-3 md:col-span-2 text-right font-body-md text-body-md text-on-surface">342k</div>
+</div>
+<!-- Row 2 -->
+<div class="grid grid-cols-12 gap-sm items-center py-sm px-sm hover:bg-surface-container-low transition-colors rounded-lg group">
+<div class="col-span-5 md:col-span-4 flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-label-sm">EM</div>
+<span class="font-body-md text-body-md text-on-surface truncate">Elon Musk</span>
+</div>
+<div class="col-span-4 md:col-span-6 flex items-center gap-sm">
+<div class="w-full bg-surface-variant rounded-full h-2">
+<div class="bg-secondary h-2 rounded-full" style="width: 30%"></div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant hidden md:inline-block">8.2M</span>
+</div>
+<div class="col-span-3 md:col-span-2 text-right font-body-md text-body-md text-on-surface">210k</div>
+</div>
+<!-- Row 3 -->
+<div class="grid grid-cols-12 gap-sm items-center py-sm px-sm hover:bg-surface-container-low transition-colors rounded-lg group">
+<div class="col-span-5 md:col-span-4 flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-tertiary-container text-on-tertiary-container flex items-center justify-center font-bold text-label-sm">BG</div>
+<span class="font-body-md text-body-md text-on-surface truncate">Bill Gates</span>
+</div>
+<div class="col-span-4 md:col-span-6 flex items-center gap-sm">
+<div class="w-full bg-surface-variant rounded-full h-2">
+<div class="bg-secondary h-2 rounded-full opacity-70" style="width: 15%"></div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant hidden md:inline-block">4.1M</span>
+</div>
+<div class="col-span-3 md:col-span-2 text-right font-body-md text-body-md text-on-surface">95k</div>
+</div>
+</div>
+<div class="mt-lg flex justify-center border-t border-outline-variant pt-md">
+<button class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors flex items-center gap-xs">
+                    더 보기 <span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center py-2 bg-surface dark:bg-surface-dim border-t border-outline-variant dark:border-on-surface-variant rounded-t-xl shadow-lg">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container transition-all active:scale-90 duration-150 p-2 rounded-lg w-16" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-label-sm text-label-sm mt-1">템플릿</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container transition-all active:scale-90 duration-150 p-2 rounded-lg w-16" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-sm text-label-sm mt-1">히스토리</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary font-bold hover:bg-surface-container transition-all active:scale-90 duration-150 p-2 rounded-lg w-16" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">admin_panel_settings</span>
+<span class="font-label-sm text-label-sm mt-1">관리자</span>
+</a>
+</nav>
+</body></html>
