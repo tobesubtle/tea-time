@@ -1,11 +1,9 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/infrastructure/supabase/server';
 import { SupabaseUsageRepository } from '@/infrastructure/repositories/SupabaseUsageRepository';
-import { SupabaseCronLogRepository } from '@/infrastructure/repositories/SupabaseCronLogRepository';
 import { AdminHeader } from '@/presentation/components/admin/AdminHeader';
 import { AdminSubNav } from '@/presentation/components/admin/AdminSubNav';
 import { UsageDashboard } from '@/presentation/components/admin/UsageDashboard';
-import { BottomNav } from '@/presentation/components/admin/BottomNav';
 
 export const metadata = {
   title: '관리자 - 사용량 통계 | 티타임은 즐거워',
@@ -35,10 +33,9 @@ export default async function AdminUsagePage() {
     <div className="min-h-screen bg-[#f8f9fa] dark:bg-zinc-950 text-zinc-900 dark:text-white flex flex-col font-sans">
       <AdminHeader userEmail={currentUserEmail} userName={userName} userRole={userRole} />
       <AdminSubNav activeTab="usage" />
-      <main className="flex-1">
+      <main className="flex-1 pb-8">
         <UsageDashboard initialReport={initialReport} />
       </main>
-      <BottomNav />
     </div>
   );
 }

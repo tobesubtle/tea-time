@@ -4,7 +4,6 @@ import { SupabaseCronLogRepository } from '@/infrastructure/repositories/Supabas
 import { AdminHeader } from '@/presentation/components/admin/AdminHeader';
 import { AdminSubNav } from '@/presentation/components/admin/AdminSubNav';
 import { CronMonitoringDashboard } from '@/presentation/components/admin/CronMonitoringDashboard';
-import { BottomNav } from '@/presentation/components/admin/BottomNav';
 
 export const metadata = {
   title: '크론 모니터링 | 관리자 | 티타임은 즐거워',
@@ -34,10 +33,9 @@ export default async function AdminCronPage() {
     <div className="min-h-screen bg-[#f8f9fa] dark:bg-zinc-950 text-zinc-900 dark:text-white flex flex-col font-sans">
       <AdminHeader userEmail={currentUserEmail} userName={userName} userRole={userRole} />
       <AdminSubNav activeTab="cron" />
-      <main className="flex-1 pb-20 md:pb-8">
+      <main className="flex-1 pb-8">
         <CronMonitoringDashboard initialLogs={cronLogs} />
       </main>
-      <BottomNav />
     </div>
   );
 }

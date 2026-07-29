@@ -6,7 +6,6 @@ import { SupabaseTemplateRepository } from '@/infrastructure/repositories/Supaba
 import { AdminHeader } from '@/presentation/components/admin/AdminHeader';
 import { AdminSubNav } from '@/presentation/components/admin/AdminSubNav';
 import { DeletedPromptList } from '@/presentation/components/admin/DeletedPromptList';
-import { BottomNav } from '@/presentation/components/admin/BottomNav';
 
 export const metadata = {
   title: '소프트 삭제된 프롬프트 관리 | 관리자 | 티타임은 즐거워',
@@ -25,7 +24,6 @@ export default async function AdminPromptsPage() {
     redirect('/login');
   }
 
-  // 일반 사용자가 관리자 페이지 진입 시 차단 및 초기화면으로 이동
   if (userRole === 'user') {
     redirect('/templates');
   }
@@ -43,14 +41,13 @@ export default async function AdminPromptsPage() {
     <div className="min-h-screen bg-[#f8f9fa] dark:bg-zinc-950 text-zinc-900 dark:text-white flex flex-col font-sans">
       <AdminHeader userEmail={currentUserEmail} userName={userName} userRole={userRole} />
       <AdminSubNav activeTab="prompts" />
-      <main className="flex-1 pb-20 md:pb-8">
+      <main className="flex-1 pb-8">
         <DeletedPromptList
           initialHistories={deletedHistories}
           users={users}
           templates={templates}
         />
       </main>
-      <BottomNav />
     </div>
   );
 }
