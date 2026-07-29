@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { Lock, ArrowRight, Coffee } from 'lucide-react';
+import { Lock, ArrowRight, Coffee, Loader2 } from 'lucide-react';
 import { loginAction } from '@/app/auth/actions';
 
 export function LoginForm() {
@@ -83,8 +83,17 @@ export function LoginForm() {
             disabled={isPending}
             className="w-full mt-2 bg-[#122338] hover:bg-[#1c324e] active:scale-[0.99] text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center gap-2 text-sm transition-all shadow-md disabled:opacity-50 cursor-pointer"
           >
-            {isPending ? '로그인 중...' : '로그인'}
-            {!isPending && <ArrowRight className="w-4 h-4" />}
+            {isPending ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>로그인 중...</span>
+              </>
+            ) : (
+              <>
+                <span>로그인</span>
+                <ArrowRight className="w-4 h-4" />
+              </>
+            )}
           </button>
         </form>
 

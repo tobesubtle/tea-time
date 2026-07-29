@@ -1,3 +1,4 @@
+import { SubmitButtonWithLoading } from '@/presentation/components/common/SubmitButtonWithLoading';
 import Link from 'next/link';
 import { createClient } from '@/infrastructure/supabase/server';
 import Header from '@/presentation/components/Header';
@@ -166,14 +167,14 @@ export default async function PromptRunPage({ searchParams }: PageProps) {
               />
             </div>
 
-            {/* Action Button */}
-            <button
-              type="submit"
-              className="w-full bg-[#091426] text-white rounded-xl h-12 font-medium text-sm flex items-center justify-center space-x-2 shadow-sm hover:bg-[#1e293b] transition-colors"
-            >
-              <span>Gemini AI 실행하기</span>
-              <span className="material-symbols-outlined text-sm">send</span>
-            </button>
+            {/* Action Button with Loading Spinner */}
+            <SubmitButtonWithLoading
+              label="Gemini AI 실행하기"
+              loadingLabel="Gemini AI 답변 생성 중..."
+              overlayMessage="Gemini AI가 답변을 생성하고 있습니다..."
+              overlaySubMessage="요청 프롬프트를 분석하고 데이터를 처리하는 중입니다."
+              icon="send"
+            />
           </form>
         </div>
       </main>

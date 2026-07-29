@@ -1,7 +1,9 @@
+import { Suspense } from 'react';
 import type { Metadata } from "next";
 import { Inter, Geist } from "next/font/google";
 import "./globals.css";
 import { ViewModeProvider } from "@/presentation/components/common/ViewModeContext";
+import { NavigationLoadingHandler } from "@/presentation/components/common/NavigationLoadingHandler";
 import Footer from "@/presentation/components/Footer";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -64,6 +66,9 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col bg-[#f8f9ff] text-[#0b1c30]">
         <ViewModeProvider>
+          <Suspense fallback={null}>
+            <NavigationLoadingHandler />
+          </Suspense>
           <div className="flex-1 flex flex-col">
             {children}
           </div>

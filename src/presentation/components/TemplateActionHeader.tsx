@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { LoadingOverlay } from '@/presentation/components/common/LoadingOverlay';
 import {
   updateTemplateAction,
   deleteTemplateAction,
@@ -134,9 +135,11 @@ export function TemplateActionHeader({ template }: TemplateActionHeaderProps) {
             onClick={handleDuplicate}
             disabled={isPending}
             title="새 템플릿으로 복제"
-            className="px-2.5 py-1.5 bg-[#f8f9ff] hover:bg-[#eff4ff] border border-[#c5c6cd]/60 text-[#0b1c30] rounded-xl text-xs font-medium transition-colors flex items-center gap-1"
+            className="px-2.5 py-1.5 bg-[#f8f9ff] hover:bg-[#eff4ff] border border-[#c5c6cd]/60 text-[#0b1c30] rounded-xl text-xs font-medium transition-colors flex items-center gap-1 disabled:opacity-50"
           >
-            <span className="material-symbols-outlined text-sm text-purple-600">file_copy</span>
+            <span className={`material-symbols-outlined text-sm text-purple-600 ${isPending ? 'animate-spin' : ''}`}>
+              {isPending ? 'sync' : 'file_copy'}
+            </span>
             <span>복제</span>
           </button>
 
@@ -155,13 +158,22 @@ export function TemplateActionHeader({ template }: TemplateActionHeaderProps) {
             onClick={handleDelete}
             disabled={isPending}
             title="템플릿 삭제"
-            className="px-2.5 py-1.5 bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 rounded-xl text-xs font-medium transition-colors flex items-center gap-1"
+            className="px-2.5 py-1.5 bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 rounded-xl text-xs font-medium transition-colors flex items-center gap-1 disabled:opacity-50"
           >
-            <span className="material-symbols-outlined text-sm">delete</span>
+            <span className={`material-symbols-outlined text-sm ${isPending ? 'animate-spin' : ''}`}>
+              {isPending ? 'sync' : 'delete'}
+            </span>
             <span>삭제</span>
           </button>
         </div>
       </div>
+
+      {/* Loading Overlay when operation in progress */}
+      <LoadingOverlay
+        isLoading={isPending}
+        message="템플릿 작업을 처리하고 있습니다..."
+        subMessage="잠시만 기다려 주세요."
+      />
 
       {/* Inline Edit Form */}
       {isEditing && (

@@ -1,3 +1,4 @@
+import { SubmitButtonWithLoading } from '@/presentation/components/common/SubmitButtonWithLoading';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { createClient } from '@/infrastructure/supabase/server';
@@ -159,14 +160,13 @@ export default async function PromptCreatePage({ searchParams }: PageProps) {
               {/* 최하단 위치: AI 모델 선택 (Gemini 3.5 Flash-Lite 기본 선택, 상세 감춤) */}
               <ModelSelectAccordion models={availableModels} defaultModelId="gemini-3.5-flash-lite" />
 
-              {/* Action Button */}
-              <button
-                type="submit"
-                className="w-full bg-[#091426] text-white rounded-xl h-12 font-medium text-sm flex items-center justify-center space-x-2 shadow-sm hover:bg-[#1e293b] transition-colors"
-              >
-                <span>완성된 프롬프트 검토 및 실행</span>
-                <span className="material-symbols-outlined text-sm">arrow_forward</span>
-              </button>
+              {/* Action Button with Loading Spinner */}
+              <SubmitButtonWithLoading
+                label="완성된 프롬프트 검토 및 실행"
+                loadingLabel="프롬프트 구성 중..."
+                overlayMessage="완성된 프롬프트를 작성 중입니다..."
+                icon="arrow_forward"
+              />
             </form>
           )}
         </div>
