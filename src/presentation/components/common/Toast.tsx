@@ -3,9 +3,10 @@
 export interface ToastProps {
   message: string | null;
   type?: 'success' | 'error' | 'info';
+  onClose?: () => void;
 }
 
-export function Toast({ message, type = 'success' }: ToastProps) {
+export function Toast({ message, type = 'success', onClose }: ToastProps) {
   if (!message) return null;
 
   const iconName = type === 'error' ? 'error' : type === 'info' ? 'info' : 'check_circle';
