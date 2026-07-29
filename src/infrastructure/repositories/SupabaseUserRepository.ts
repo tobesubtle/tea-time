@@ -37,7 +37,7 @@ export class SupabaseUserRepository implements UserRepository {
 
     const { data, error } = await adminClient.auth.admin.createUser({
       email: input.email,
-      password: tempPassword,
+      password: input.password && input.password.trim() !== '' ? input.password : tempPassword,
       email_confirm: true,
       user_metadata: {
         name: input.name,
@@ -61,6 +61,10 @@ export class SupabaseUserRepository implements UserRepository {
   async updateUser(input: UpdateUserInput): Promise<User> {
     const adminClient = createAdminClient();
     const updatePayload: any = {};
+
+    if (input.password && input.password.trim() !== '') {
+      updatePayload.password = input.password;
+    }
 
     if (input.name !== undefined || input.role !== undefined) {
       updatePayload.user_metadata = {};

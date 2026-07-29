@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useEffect, useTransition } from 'react';
 import { User } from '@/domain/entities/User';
 import { Pencil, Trash2, UserPlus } from 'lucide-react';
 import { UserModal } from './UserModal';
@@ -15,6 +15,10 @@ export function UserList({ initialUsers }: UserListProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userToEdit, setUserToEdit] = useState<User | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    setUsers(initialUsers);
+  }, [initialUsers]);
 
   const handleOpenAddModal = () => {
     setUserToEdit(null);

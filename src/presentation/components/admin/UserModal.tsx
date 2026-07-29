@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useEffect, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import { User, UserRole } from '@/domain/entities/User';
 import { createUserAction, updateUserAction } from '@/app/auth/actions';
 import { Modal } from '@/presentation/components/common/Modal';
@@ -13,6 +14,7 @@ interface UserModalProps {
 }
 
 export function UserModal({ isOpen, onClose, userToEdit }: UserModalProps) {
+  const router = useRouter();
   const [name, setName] = useState(userToEdit?.name || '');
   const [email, setEmail] = useState(userToEdit?.email || '');
   const [role, setRole] = useState<UserRole>(userToEdit?.role || 'user');
@@ -22,12 +24,22 @@ export function UserModal({ isOpen, onClose, userToEdit }: UserModalProps) {
 
   const isEditMode = !!userToEdit;
 
+  useEffect(() => {
+    if (isOpen) {
+      setName(userToEdit?.name || '');
+      setEmail(userToEdit?.email || '');
+      setRole(userToEdit?.role || 'user');
+      setPassword('');
+      setErrorMsg(null);
+    }
+  }, [isOpen, userToEdit]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
 
     startTransition(async () => {
-      if (isEditMode) {
+      if (isEditMode && userToEdit) {
         const res = await updateUserAction({
           id: userToEdit.id,
           name,
@@ -35,6 +47,7 @@ export function UserModal({ isOpen, onClose, userToEdit }: UserModalProps) {
           password: password || undefined,
         });
         if (res.success) {
+          router.refresh();
           onClose();
         } else {
           setErrorMsg(res.message || '사용자 정보 수정 실패');
@@ -44,9 +57,10 @@ export function UserModal({ isOpen, onClose, userToEdit }: UserModalProps) {
           email,
           name,
           role,
-          password,
+          password: password || undefined,
         });
         if (res.success) {
+          router.refresh();
           onClose();
         } else {
           setErrorMsg(res.message || '사용자 생성 실패');
@@ -69,21 +83,24 @@ export function UserModal({ isOpen, onClose, userToEdit }: UserModalProps) {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {!isEditMode && (
-            <div>
-              <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-                이메일
-              </label>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="user@domain.com"
-                className="w-full px-3.5 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#4648d4]"
-              />
-            </div>
-          )}
+          <div>
+            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+              이메일
+            </label>
+            <input
+              type="email"
+              required={!isEditMode}
+              disabled={isEditMode}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="user@domain.com"
+              className={`w-full px-3.5 py-2 border rounded-lg text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#4648d4] ${
+                isEditMode
+                  ? 'bg-zinc-100 dark:bg-zinc-800/50 text-zinc-500 cursor-not-allowed border-zinc-200 dark:border-zinc-700'
+                  : 'bg-zinc-50 dark:bg-zinc-800 border-zinc-300 dark:border-zinc-700'
+              }`}
+            />
+          </div>
 
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
@@ -116,14 +133,14 @@ export function UserModal({ isOpen, onClose, userToEdit }: UserModalProps) {
 
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-              비밀번호 {isEditMode && '(변경 시에만 입력)'}
+              비밀번호 {isEditMode ? '(변경 시에만 입력)' : '(미입력 시 TempPassword123!)'}
             </label>
             <input
               type="password"
-              required={!isEditMode}
+              required={false}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder={isEditMode ? '새 비밀번호' : '••••••••'}
+              placeholder={isEditMode ? '새 비밀번호' : '미입력 시 TempPassword123! 적용'}
               className="w-full px-3.5 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#4648d4]"
             />
           </div>
@@ -141,3 +158,4 @@ export function UserModal({ isOpen, onClose, userToEdit }: UserModalProps) {
     </Modal>
   );
 }
+
