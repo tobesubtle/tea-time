@@ -51,6 +51,19 @@ export default function Footer() {
         </div>
       </div>
 
+      <div className="flex items-center justify-center gap-4 flex-wrap pt-1">
+        <a
+          href="/project_final_report.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-slate-700 dark:text-zinc-200 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 font-medium transition-colors border border-slate-200 dark:border-zinc-700 shadow-2xs group"
+        >
+          <span className="material-symbols-outlined text-sm text-[#4648d4] dark:text-indigo-400">description</span>
+          <span>프로젝트 최종 보고서 보기</span>
+          <span className="material-symbols-outlined text-xs opacity-60 group-hover:translate-x-0.5 transition-transform">open_in_new</span>
+        </a>
+      </div>
+
       <p className="text-[11px] text-slate-400">
         © 2026 티타임은 즐거워 (Tea Time Prompt Manager). All rights reserved.
       </p>

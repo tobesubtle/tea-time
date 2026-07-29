@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gemini 프롬프트 템플릿 매니저 프로젝트 최종 보고서</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Outfit:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    @page {
+      size: A4;
+      margin: 15mm 15mm 15mm 15mm;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', 'Segoe UI', -apple-system, sans-serif;
+      color: #1e293b;
+      line-height: 1.6;
+      font-size: 10.5pt;
+      background-color: #ffffff;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* Header & Cover Banner */
+    .header-banner {
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #4338ca 100%);
+      color: #ffffff;
+      padding: 32px 36px;
+      border-radius: 14px;
+      margin-bottom: 28px;
+      box-shadow: 0 10px 25px -5px rgba(49, 46, 129, 0.25);
+    }
+
+    .header-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(8px);
+      color: #e0e7ff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 8.5pt;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .header-banner h1 {
+      font-family: 'Outfit', 'Noto Sans KR', sans-serif;
+      font-size: 22pt;
+      font-weight: 700;
+      margin: 0 0 10px 0;
+      letter-spacing: -0.5px;
+      line-height: 1.25;
+    }
+
+    .header-banner p {
+      color: #c7d2fe;
+      font-size: 10pt;
+      margin: 0;
+      font-weight: 300;
+    }
+
+    .meta-table {
+      width: 100%;
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .meta-item {
+      font-size: 9pt;
+    }
+    .meta-item .label {
+      color: #a5b4fc;
+      font-weight: 500;
+    }
+    .meta-item .val {
+      color: #ffffff;
+      font-weight: 600;
+    }
+    .meta-item a {
+      color: #93c5fd;
+      text-decoration: none;
+    }
+
+    /* Section Styling */
+    .section {
+      margin-bottom: 26px;
+      page-break-inside: avoid;
+    }
+
+    h2 {
+      font-family: 'Outfit', 'Noto Sans KR', sans-serif;
+      font-size: 13.5pt;
+      font-weight: 700;
+      color: #1e1b4b;
+      margin: 0 0 12px 0;
+      padding-bottom: 6px;
+      border-bottom: 2px solid #e0e7ff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    h2::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 16px;
+      background: #4338ca;
+      border-radius: 2px;
+    }
+
+    h3 {
+      font-size: 11pt;
+      font-weight: 600;
+      color: #334155;
+      margin: 14px 0 8px 0;
+    }
+
+    p {
+      margin: 0 0 10px 0;
+      color: #334155;
+    }
+
+    ul, ol {
+      margin: 0 0 12px 0;
+      padding-left: 20px;
+    }
+
+    li {
+      margin-bottom: 5px;
+      color: #334155;
+    }
+
+    strong {
+      color: #0f172a;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin: 12px 0 16px 0;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      font-size: 9.5pt;
+    }
+
+    th {
+      background-color: #f8fafc;
+      color: #334155;
+      font-weight: 600;
+      text-align: left;
+      padding: 9px 14px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    td {
+      padding: 9px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #475569;
+      vertical-align: top;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:nth-child(even) td {
+      background-color: #fafafa;
+    }
+
+    /* Code & Tree Blocks */
+    pre, code {
+      font-family: 'Fira Code', Consolas, Monaco, monospace;
+    }
+
+    code {
+      background-color: #f1f5f9;
+      color: #4338ca;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 9pt;
+    }
+
+    pre {
+      background-color: #0f172a;
+      color: #e2e8f0;
+      padding: 14px 16px;
+      border-radius: 8px;
+      font-size: 8.5pt;
+      line-height: 1.5;
+      overflow-x: auto;
+      margin: 10px 0 14px 0;
+    }
+
+    pre code {
+      background: none;
+      color: inherit;
+      padding: 0;
+    }
+
+    /* Callout & Highlights */
+    .callout {
+      background-color: #f0fdf4;
+      border-left: 4px solid #16a34a;
+      padding: 12px 16px;
+      border-radius: 0 8px 8px 0;
+      margin: 12px 0;
+      font-size: 9.5pt;
+    }
+
+    .callout-title {
+      font-weight: 700;
+      color: #15803d;
+      margin-bottom: 4px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 12px 0;
+    }
+
+    .card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 14px;
+    }
+
+    .card-title {
+      font-weight: 700;
+      color: #1e1b4b;
+      margin-bottom: 6px;
+      font-size: 10pt;
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 30px;
+      padding-top: 14px;
+      border-top: 1px solid #e2e8f0;
+      font-size: 8.5pt;
+      color: #94a3b8;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 8pt;
+      font-weight: 600;
+      background-color: #e0e7ff;
+      color: #3730a3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <!-- Cover / Header Banner -->
+    <div class="header-banner">
+      <div class="header-badge">FINAL PROJECT REPORT</div>
+      <h1>Gemini 프롬프트 템플릿 매니저<br>최종 보고서</h1>
+      <p>기술 세미나 발표 및 향후 프로젝트 참고자료 자산화 보고서</p>
+      
+      <div class="meta-table">
+        <div class="meta-item">
+          <div class="label">배포 URL</div>
+          <div class="val"><a href="https://tea-time-six.vercel.app/" target="_blank">tea-time-six.vercel.app</a></div>
+        </div>
+        <div class="meta-item">
+          <div class="label">작성일자</div>
+          <div class="val">2026년 7월 29일</div>
+        </div>
+        <div class="meta-item">
+          <div class="label">개발 프레임워크</div>
+          <div class="val">Next.js 16 (App Router)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1. 시스템 개요 및 현재 운영 현황 -->
+    <div class="section">
+      <h2>1. 시스템 개요 및 현재 운영 현황</h2>
+      <h3>1.1 시스템 개요</h3>
+      <p>'Gemini 프롬프트 템플릿 매니저'는 생성형 AI(Google Gemini API) 활용 시 자주 사용되는 프롬프트 구조를 템플릿화하여 통합 관리하고, 동적 변수 입력 및 다중 소스 파일(로컬 PDF, Google Drive 파일) 첨부를 통해 고품질 프롬프트를 신속하게 생성·실행·관리할 수 있는 <strong>엔터프라이즈급 반응형 웹 서비스</strong>입니다.</p>
+      
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">📌 주요 기능 특징</div>
+          <ul style="margin:0; padding-left:16px;">
+            <li>프롬프트 내 <code>{{변수}}</code> 템플릿 지정 및 모범 예시 매핑</li>
+            <li>프롬프트 실행 내역 저장, 인라인 수정 및 Soft/Hard Delete</li>
+            <li>백그라운드 메일 수신함 전송 및 429 쿼터 경고 알림 구축</li>
+            <li>Footer 기반 전역 PC/모바일 보기 모드 토글 지원</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">🌐 운영 현황</div>
+          <ul style="margin:0; padding-left:16px;">
+            <li><strong>배포 환경</strong>: Vercel Platform (자동 CI/CD 연동)</li>
+            <li><strong>DB & 인증</strong>: Supabase (PostgreSQL, Auth, RLS)</li>
+            <li><strong>운영 상태</strong>: 정상 운용 중 (관리자 계정 통합 제어 및 API 쿼터 자동 모니터링 활성화)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. 시스템 요구사항 및 구현 내용 -->
+    <div class="section">
+      <h2>2. 시스템 요구사항 및 구현 내용</h2>
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 20%;">구분</th>
+            <th style="width: 30%;">주요 요구사항</th>
+            <th style="width: 50%;">구현 내용 및 반영 사항</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>인증/권한</strong></td>
+            <td>관리자 승인 기반 사용자 관리</td>
+            <td>• 일반 사용자 직접 회원가입 비활성화 (Signups Disabled)<br>• Admin에 의한 계정 생성, 권한(<code>admin</code>/<code>editor</code>/<code>user</code>) 부여<br>• 프로필 모달을 통한 표시 이름 및 비밀번호 수정 기능 지원</td>
+          </tr>
+          <tr>
+            <td><strong>프롬프트 관리</strong></td>
+            <td>템플릿 생성, 변수 지원, 실행</td>
+            <td>• Gemini 3.6 Flash / 3.5 Flash-Lite / 3.1 Pro 등 모델 지정<br>• 변수 유효성 검사 및 과거 사용 이력 즉시 조회 지원<br>• 실행 전 최종 프롬프트 검토 및 실행 결과 웹 인라인 수정(<code>onBlur</code>)</td>
+          </tr>
+          <tr>
+            <td><strong>첨부 파일</strong></td>
+            <td>다중 소스 파일 텍스트 추출</td>
+            <td>• 로컬 파일(PDF) 및 Google Drive API 연동 파일 첨부 지원</td>
+          </tr>
+          <tr>
+            <td><strong>결과 활용</strong></td>
+            <td>데이터 내보내기 & 전송</td>
+            <td>• 결과 <code>.txt</code> 다운로드 기능<br>• Nodemailer(SMTP) 기반 로그인 사용자 이메일 백그라운드 자동 전송</td>
+          </tr>
+          <tr>
+            <td><strong>운영/모니터링</strong></td>
+            <td>API 사용량 및 쿼터 관리</td>
+            <td>• 사용자별 API 호출 횟수 및 <code>k</code>(천) 단위 토큰 사용량 모니터링<br>• 크론 이력 조회 및 1년 경과 로그 자동 정리(Auto Pruning)<br>• 429 쿼터 오류 감지 시 관리자 자동 경고 메일 발송 및 관리 콘솔 제공</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 3. 기술 스택 및 기술별 프로젝트 적용 사항 -->
+    <div class="section">
+      <h2>3. 기술 스택 및 기술별 프로젝트 적용 사항</h2>
+      <ul>
+        <li><strong>Next.js 16 (App Router)</strong>: Server Components와 Server Actions를 적극 활용하여 초기 로딩 속도 최적화 및 클라이언트 번들 사이즈 최소화. <code>next/og</code>를 활용한 1200x630px 동적 SEO 오픈그래프 썸네일 카드 자동 생성.</li>
+        <li><strong>TypeScript (Strict Mode)</strong>: 프로젝트 전반에 <code>strict: true</code> 적용. <code>any</code> 타입을 엄격히 배제하고 Domain Interface와 Supabase DB 스키마 자동 추출 타입을 결합하여 100% 타입 안전성 확보.</li>
+        <li><strong>Supabase (<code>@supabase/ssr</code>)</strong>: Next.js App Router 서버-클라이언트 환경 간 쿠키/세션 동기화를 위해 최신 <code>@supabase/ssr</code> 패키지 적용. DB 단 RLS(Row Level Security) 정책을 완벽 적용하여 보안 이중 강화.</li>
+        <li><strong>Nodemailer (SMTP)</strong>: 프롬프트 결과 메일 발송 및 API 쿼터 초과 시 관리자 경고 메일 백그라운드 발송 Engine 구현.</li>
+        <li><strong>Vanilla CSS / CSS Modules & Tailwind CSS v4</strong>: 글로벌 디자인 시스템(<code>:root</code> 토큰 변수)을 기반으로 CSS Modules와 Tailwind CSS v4를 혼용하여 고유하고 세련된 Dark/Light 디자인 구축.</li>
+      </ul>
+    </div>
+
+    <!-- 4. 클린 아키텍처 (Clean Architecture) 및 설계 패턴 적용 -->
+    <div class="section">
+      <h2>4. 클린 아키텍처 (Clean Architecture) 및 설계 패턴 적용</h2>
+      <p>본 프로젝트는 프레임워크 종속성을 낮추고 테스트 및 유지보수성을 극대화하기 위해 계층형 클린 아키텍처 구조를 엄격히 준수하였습니다.</p>
+      
+      <pre><code>src/
+├── domain/                 # [Domain Layer] 외부 기술에 독립적인 순수 비즈니스 로직
+│   ├── entities/           # 데이터 엔티티 (User, PromptTemplate, QuotaLog 등)
+│   ├── repositories/       # 저장소 추상 인터페이스 (ProductRepository 등)
+│   └── usecases/           # 비즈니스 오케스트레이션 (ExecutePromptUseCase 등)
+├── infrastructure/         # [Infrastructure Layer] 외부 기술 구현체
+│   ├── api/                # Gemini API 및 Google Drive API 래퍼
+│   ├── db/                 # Supabase DB 연결 및 쿼리
+│   └── repositories/       # domain/repositories 인터페이스의 실제 구현체
+├── presentation/           # [Presentation Layer] UI 계층
+│   ├── components/         # 순수 React 컴포넌트 & 원자 컴포넌트
+│   ├── hooks/              # Usecase 연동 커스텀 훅
+│   └── store/              # Zustand 클라이언트 전역 UI 상태
+└── shared/                 # 공통 유틸리티, 상수, 에러 객체
+app/                        # [Framework Layer] Next.js App Router 라우트 (진입점)</code></pre>
+
+      <div class="callout">
+        <div class="callout-title">💡 의존성 역전 원칙 (DIP) 적용 효과</div>
+        Domain 계층의 <code>Repository Interface</code>를 정의하고, Infrastructure 계층에서 이를 구현(<code>implements</code>)함으로써 도메인 로직이 특정 DB(Supabase)나 외부 API에 직접 의존하지 않도록 설계했습니다. 이를 통해 DB 교체나 외부 서비스 변경 시 도메인 영역 코드 수정 없이 유연한 확장과 Mocking 테스트가 가능합니다.
+      </div>
+    </div>
+
+    <!-- 5. Antigravity와의 AI Pair Programming 협업 내용 -->
+    <div class="section">
+      <h2>5. Antigravity와의 AI Pair Programming 협업 내용 및 노하우</h2>
+      <h3>5.1 AI 협업 방식 및 개발 워크플로우</h3>
+      <ul>
+        <li><strong>규칙 기반 가이드라인 통제 (<code>.agents/rules/</code>)</strong>: <code>tech-stack.md</code>, <code>architecture.md</code>, <code>AGENTS.md</code> 등을 명시하여 AI가 생성하는 모든 코드가 클린 아키텍처 규칙 및 TypeScript Strict 규칙을 일탈하지 않도록 엄격 제어.</li>
+        <li><strong>TDD (Red-Green-Refactor) 기반 개발</strong>: 단위/통합 테스트 케이스를 우선 작성(<code>system_test_cases.md</code>)하고, Antigravity 에이전트가 이를 통과하는 코드를 작성 및 리팩토링하도록 유도.</li>
+        <li><strong>서브에이전트(Subagents) 및 특화 스킬(Skills) 활용</strong>: 코드베이스 탐색, PRD 검증, 리팩토링 및 린트 검사를 병렬로 처리하여 순수 개발 시간 약 <strong>60% 단축</strong>.</li>
+      </ul>
+      <h3>5.2 AI 활용 생산성 성과</h3>
+      <p>Strict 타입 안전성 100% 확보, 린트 에러 0건 유지, 요구사항 변경 시 테스트 케이스와 코드 간 자동 동기화로 품질 혁신 달성.</p>
+    </div>
+
+    <!-- 6. 주요 트러블슈팅 및 레슨 러닝 (Lessons Learned) -->
+    <div class="section">
+      <h2>6. 주요 트러블슈팅 및 레슨 러닝 (Lessons Learned)</h2>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">🔴 Supabase SSR 세션 동기화 이슈</div>
+          <p style="font-size:9pt; margin-bottom:6px;"><strong>문제</strong>: Server Component와 Client Component 간 쿠키 세션 전달 시 인증 상태 불일치 발생.</p>
+          <p style="font-size:9pt; margin:0;"><strong>해결</strong>: 최신 <code>@supabase/ssr</code> 기반의 <code>createBrowserClient</code> 및 <code>createServerClient</code>를 분리 적용하고 middleware에서 세션 자동 갱신 처리.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">🔴 Gemini API 쿼터 제한(429 Error) 대응</div>
+          <p style="font-size:9pt; margin-bottom:6px;"><strong>문제</strong>: 대용량 프롬프트 처리 시 429 Resource Exhausted 에러 발생으로 서비스 지연 위험.</p>
+          <p style="font-size:9pt; margin:0;"><strong>해결</strong>: 429 감지 시 <code>quota_error_logs</code> DB 테이블 기록 및 Nodemailer 백그라운드 경고 메일을 관리자에게 즉시 발송하는 모니터링 구축.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. 프로젝트 유지보수 및 온보딩 가이드 -->
+    <div class="section">
+      <h2>7. 프로젝트 유지보수 및 온보딩 가이드</h2>
+      <h3>7.1 로컬 개발 환경 설정 및 실행</h3>
+      <pre><code># 1. 패키지 설치
+npm install
+
+# 2. 환경 변수(.env) 설정 (Supabase, Gemini API, SMTP 정보)
+# 3. 개발 서버 실행
+npm run dev</code></pre>
+      <h3>7.2 데이터베이스 마이그레이션 관리</h3>
+      <p>DB 스키마 변경 사항은 <code>supabase/migrations/</code> 폴더 내에 마이그레이션 SQL 파일로 관리되며, 신규 변경 시 사용자 사전 승인 절차를 준수합니다.</p>
+    </div>
+
+    <!-- 8. 아쉬운 점 및 향후 보완점 (로드맵) -->
+    <div class="section">
+      <h2>8. 아쉬운 점 및 향후 보완점 (로드맵)</h2>
+      <h3>8.1 아쉬운 점</h3>
+      <p>대용량 PDF 문서 처리 시 서버 리소스 사용량 증대로 인한 대기 시간 및 실시간 Latency 시각화 그래프의 미비.</p>
+      <h3>8.2 향후 발전 로드맵</h3>
+      <ol>
+        <li><strong>스트리밍(Streaming) 응답 도입</strong>: Gemini API 응답을 타자기(Typing) 실시간 스트리밍 효과로 수신하여 체감 대기 시간 축소.</li>
+        <li><strong>프롬프트 템플릿 마켓플레이스/공유 기능</strong>: 팀원 간 우수 프롬프트를 공개/공유하고 평가(좋아요/댓글)할 수 있는 커뮤니티 확장.</li>
+        <li><strong>Multi-LLM 확장</strong>: Google Gemini 외 Anthropic Claude, OpenAI GPT-4o 등 다중 모델 비교 실행 지원.</li>
+      </ol>
+    </div>
+
+    <div class="footer-note">
+      Gemini Prompt Manager Project Final Report — Confidential & Internal Tech Seminar Asset
+    </div>
+
+  </div>
+</body>
+</html>
