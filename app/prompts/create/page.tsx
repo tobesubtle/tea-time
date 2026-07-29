@@ -103,8 +103,8 @@ export default async function PromptCreatePage({ searchParams }: PageProps) {
                   name="title"
                   type="text"
                   required
-                  defaultValue={selectedHistory?.title || `${selectedTemplate.title} 실행`}
-                  placeholder="예: 2분기 마케팅 기획서 생성 (필수)"
+                  defaultValue={selectedHistory?.title}
+                  placeholder={`${selectedTemplate.title} 실행 (예: 2분기 마케팅 기획서 생성)`}
                   className="w-full bg-[#f8f9ff] border border-[#c5c6cd] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#4648d4]"
                 />
               </div>

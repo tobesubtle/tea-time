@@ -38,21 +38,11 @@ export default async function PromptsListPage({ searchParams }: PageProps) {
 
       <main className="flex-1 w-full max-w-5xl mx-auto px-4 py-8 space-y-6 pb-32">
         {/* Title */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h2 className="font-bold text-2xl text-[#0b1c30]">생성된 프롬프트 목록</h2>
-            <p className="text-xs text-[#45474c] mt-1">
-              모든 사용자가 실행하고 공유한 전체 프롬프트 히스토리 내역을 확인하고 검색할 수 있습니다.
-            </p>
-          </div>
-
-          <Link
-            href="/prompts/create"
-            className="bg-[#091426] text-white rounded-xl px-5 h-11 font-medium text-sm flex items-center justify-center space-x-2 shadow-sm hover:bg-[#1e293b] transition-colors"
-          >
-            <span className="material-symbols-outlined text-sm">add</span>
-            <span>새 프롬프트 작성</span>
-          </Link>
+        <div>
+          <h2 className="font-bold text-2xl text-[#0b1c30]">생성된 프롬프트 목록</h2>
+          <p className="text-xs text-[#45474c] mt-1">
+            모든 사용자가 실행하고 공유한 전체 프롬프트 히스토리 내역을 확인하고 검색할 수 있습니다.
+          </p>
         </div>
 
         {/* Filter and Search Bar */}
