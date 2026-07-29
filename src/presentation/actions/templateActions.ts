@@ -2,9 +2,27 @@
 
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
+import { createClient } from '@/infrastructure/supabase/server';
 import { SupabaseTemplateRepository } from '@/infrastructure/repositories/SupabaseTemplateRepository';
 
 const templateRepository = new SupabaseTemplateRepository();
+
+async function verifyCanManageTemplate() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error('로그인이 필요한 기능입니다.');
+  }
+
+  const role = user.user_metadata?.role || user.app_metadata?.role || 'user';
+
+  if (role === 'user') {
+    throw new Error('템플릿 생성/수정/삭제 권한이 없습니다. (편집자 또는 관리자 권한이 필요합니다.)');
+  }
+
+  return user;
+}
 
 export async function createTemplateAction(prevState: any, formData: FormData) {
   const title = formData.get('title') as string;
@@ -18,6 +36,7 @@ export async function createTemplateAction(prevState: any, formData: FormData) {
   }
 
   try {
+    await verifyCanManageTemplate();
     await templateRepository.createTemplate({
       title,
       aiModel: aiModel || 'gemini-3.6-flash',
@@ -39,6 +58,7 @@ export async function updateTemplateAction(id: string, data: { title?: string; d
   }
 
   try {
+    await verifyCanManageTemplate();
     await templateRepository.updateTemplate(id, data);
     revalidatePath('/prompts/create');
     revalidatePath('/templates');
@@ -54,6 +74,7 @@ export async function deleteTemplateAction(id: string) {
   }
 
   try {
+    await verifyCanManageTemplate();
     await templateRepository.deleteTemplate(id);
     revalidatePath('/prompts/create');
     revalidatePath('/templates');
@@ -69,6 +90,7 @@ export async function duplicateTemplateAction(id: string) {
   }
 
   try {
+    await verifyCanManageTemplate();
     const template = await templateRepository.getTemplateById(id);
     if (!template) {
       return { success: false, message: '템플릿을 찾을 수 없습니다.' };

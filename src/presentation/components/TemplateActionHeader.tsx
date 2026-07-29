@@ -18,11 +18,13 @@ interface TemplateItem {
 
 interface TemplateActionHeaderProps {
   template: TemplateItem;
+  userRole?: string;
 }
 
-export function TemplateActionHeader({ template }: TemplateActionHeaderProps) {
+export function TemplateActionHeader({ template, userRole }: TemplateActionHeaderProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const canManage = userRole === 'editor' || userRole === 'admin';
 
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(template.title);
@@ -130,41 +132,45 @@ export function TemplateActionHeader({ template }: TemplateActionHeaderProps) {
             <span>복사</span>
           </button>
 
-          <button
-            type="button"
-            onClick={handleDuplicate}
-            disabled={isPending}
-            title="새 템플릿으로 복제"
-            className="px-2.5 py-1.5 bg-[#f8f9ff] hover:bg-[#eff4ff] border border-[#c5c6cd]/60 text-[#0b1c30] rounded-xl text-xs font-medium transition-colors flex items-center gap-1 disabled:opacity-50"
-          >
-            <span className={`material-symbols-outlined text-sm text-purple-600 ${isPending ? 'animate-spin' : ''}`}>
-              {isPending ? 'sync' : 'file_copy'}
-            </span>
-            <span>복제</span>
-          </button>
+          {canManage && (
+            <>
+              <button
+                type="button"
+                onClick={handleDuplicate}
+                disabled={isPending}
+                title="새 템플릿으로 복제"
+                className="px-2.5 py-1.5 bg-[#f8f9ff] hover:bg-[#eff4ff] border border-[#c5c6cd]/60 text-[#0b1c30] rounded-xl text-xs font-medium transition-colors flex items-center gap-1 disabled:opacity-50"
+              >
+                <span className={`material-symbols-outlined text-sm text-purple-600 ${isPending ? 'animate-spin' : ''}`}>
+                  {isPending ? 'sync' : 'file_copy'}
+                </span>
+                <span>복제</span>
+              </button>
 
-          <button
-            type="button"
-            onClick={() => setIsEditing((prev) => !prev)}
-            title="템플릿 수정"
-            className="px-2.5 py-1.5 bg-[#f8f9ff] hover:bg-[#eff4ff] border border-[#c5c6cd]/60 text-[#0b1c30] rounded-xl text-xs font-medium transition-colors flex items-center gap-1"
-          >
-            <span className="material-symbols-outlined text-sm text-amber-600">edit</span>
-            <span>{isEditing ? '취소' : '수정'}</span>
-          </button>
+              <button
+                type="button"
+                onClick={() => setIsEditing((prev) => !prev)}
+                title="템플릿 수정"
+                className="px-2.5 py-1.5 bg-[#f8f9ff] hover:bg-[#eff4ff] border border-[#c5c6cd]/60 text-[#0b1c30] rounded-xl text-xs font-medium transition-colors flex items-center gap-1"
+              >
+                <span className="material-symbols-outlined text-sm text-amber-600">edit</span>
+                <span>{isEditing ? '취소' : '수정'}</span>
+              </button>
 
-          <button
-            type="button"
-            onClick={handleDelete}
-            disabled={isPending}
-            title="템플릿 삭제"
-            className="px-2.5 py-1.5 bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 rounded-xl text-xs font-medium transition-colors flex items-center gap-1 disabled:opacity-50"
-          >
-            <span className={`material-symbols-outlined text-sm ${isPending ? 'animate-spin' : ''}`}>
-              {isPending ? 'sync' : 'delete'}
-            </span>
-            <span>삭제</span>
-          </button>
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={isPending}
+                title="템플릿 삭제"
+                className="px-2.5 py-1.5 bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 rounded-xl text-xs font-medium transition-colors flex items-center gap-1 disabled:opacity-50"
+              >
+                <span className={`material-symbols-outlined text-sm ${isPending ? 'animate-spin' : ''}`}>
+                  {isPending ? 'sync' : 'delete'}
+                </span>
+                <span>삭제</span>
+              </button>
+            </>
+          )}
         </div>
       </div>
 

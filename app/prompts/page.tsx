@@ -30,7 +30,7 @@ export default async function PromptsListPage({ searchParams }: PageProps) {
   const allTemplates = await templateRepo.getTemplates();
 
   const historyRepo = new SupabasePromptHistoryRepository();
-  const histories = await historyRepo.getUserPromptHistories(user?.id, selectedTemplateId, searchQuery);
+  const histories = await historyRepo.getUserPromptHistories(undefined, selectedTemplateId, searchQuery);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f8f9ff]">
@@ -42,7 +42,7 @@ export default async function PromptsListPage({ searchParams }: PageProps) {
           <div>
             <h2 className="font-bold text-2xl text-[#0b1c30]">생성된 프롬프트 목록</h2>
             <p className="text-xs text-[#45474c] mt-1">
-              지금까지 실행 및 저장된 내역을 확인하고 검색할 수 있습니다.
+              모든 사용자가 실행하고 공유한 전체 프롬프트 히스토리 내역을 확인하고 검색할 수 있습니다.
             </p>
           </div>
 

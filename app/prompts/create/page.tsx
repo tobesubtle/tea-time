@@ -39,14 +39,14 @@ export default async function PromptCreatePage({ searchParams }: PageProps) {
   const userRole = user?.user_metadata?.role || user?.app_metadata?.role || 'user';
   const userName = user?.user_metadata?.name;
 
-  // 과거 이력 가져오기
-  const recentHistory = selectedTemplate && user
-    ? await historyRepo.getRecentHistoryByTemplateId(selectedTemplate.id, user.id)
+  // 과거 이력 가져오기 (모든 사용자의 템플릿 사용 이력 공유)
+  const recentHistory = selectedTemplate
+    ? await historyRepo.getRecentHistoryByTemplateId(selectedTemplate.id, '')
     : [];
 
-  // 특정 이력이 선택된 경우 해당 이력의 변수 값 불러오기
+  // 특정 이력이 선택된 경우 ID로 직접 조회하여 입력 변수 불러오기
   const selectedHistory = params.historyId
-    ? recentHistory.find((h) => h.id === params.historyId) || null
+    ? await historyRepo.getPromptHistoryById(params.historyId)
     : null;
 
   const defaultVariables = selectedHistory?.inputVariables || {};
@@ -78,7 +78,7 @@ export default async function PromptCreatePage({ searchParams }: PageProps) {
           )}
 
           {/* Template Action Card (수정 / 복사 / 삭제 기능) */}
-          {selectedTemplate && <TemplateActionHeader template={selectedTemplate} />}
+          {selectedTemplate && <TemplateActionHeader template={selectedTemplate} userRole={userRole} />}
 
           {/* 요구사항 3: 템플릿 원본 미리보기는 선택된 템플릿 바로 아래 위치 */}
           {selectedTemplate && <TemplatePreview content={selectedTemplate.content} />}

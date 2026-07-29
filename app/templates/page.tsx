@@ -44,13 +44,15 @@ export default async function TemplatesPage({ searchParams }: PageProps) {
             />
           </form>
 
-          <Link
-            href="/templates/create"
-            className="bg-[#091426] text-white rounded-xl px-5 h-11 font-medium text-sm flex items-center justify-center space-x-2 shadow-sm hover:bg-[#1e293b] transition-colors"
-          >
-            <span className="material-symbols-outlined">add</span>
-            <span>템플릿 생성</span>
-          </Link>
+          {userRole !== 'user' && (
+            <Link
+              href="/templates/create"
+              className="bg-[#091426] text-white rounded-xl px-5 h-11 font-medium text-sm flex items-center justify-center space-x-2 shadow-sm hover:bg-[#1e293b] transition-colors"
+            >
+              <span className="material-symbols-outlined">add</span>
+              <span>템플릿 생성</span>
+            </Link>
+          )}
         </div>
 
         {/* Categories */}
