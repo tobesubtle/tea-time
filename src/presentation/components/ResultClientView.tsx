@@ -3,6 +3,9 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { updatePromptResultAction } from '@/presentation/actions/promptActions';
+import { Toast } from '@/presentation/components/common/Toast';
+import { Badge } from '@/presentation/components/common/Badge';
+import { Button } from '@/presentation/components/common/Button';
 
 interface ResultClientViewProps {
   history: {
@@ -90,31 +93,53 @@ export default function ResultClientView({ history, userEmail }: ResultClientVie
     showToast('.txt 파일이 다운로드되었습니다');
   };
 
-  // 이메일 발송 (mailto 사용)
-  const handleEmailSend = () => {
-    const mailto = `mailto:${userEmail || ''}?subject=${encodeURIComponent(
-      '[Prompt Result] ' + (history.title || 'Gemini 생성 결과')
-    )}&body=${encodeURIComponent(resultText)}`;
-    window.location.href = mailto;
-    showToast('이메일 클라이언트가 실행됩니다');
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+
+  // 이메일 발송 (백엔드 API 사용)
+  const handleEmailSend = async () => {
+    if (!userEmail) {
+      showToast('이메일 발송을 위한 수신자 계정 정보를 찾을 수 없습니다.');
+      return;
+    }
+
+    if (isSendingEmail) return;
+    setIsSendingEmail(true);
+
+    try {
+      const response = await fetch('/api/email/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to: userEmail,
+          subject: `[Prompt Result] ${history.title || 'Gemini 생성 결과'}`,
+          text: resultText,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        showToast('이메일이 성공적으로 발송되었습니다.');
+      } else {
+        showToast(data.error || '이메일 발송 중 오류가 발생했습니다.');
+      }
+    } catch (err: any) {
+      console.error('Email Dispatch Error:', err);
+      showToast('이메일 발송에 실패했습니다. (네트워크 오류)');
+    } finally {
+      setIsSendingEmail(false);
+    }
   };
 
   return (
     <div className="space-y-6">
       {/* Toast Notification */}
-      {toastMessage && (
-        <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-[#213145] text-white px-4 py-2.5 rounded-lg text-xs font-medium shadow-lg flex items-center gap-2 z-50 animate-bounce">
-          <span className="material-symbols-outlined text-sm">check_circle</span>
-          <span>{toastMessage}</span>
-        </div>
-      )}
+      <Toast message={toastMessage} />
 
       {/* Metadata Header */}
       <div className="bg-white border border-[#c5c6cd]/40 rounded-2xl p-5 shadow-sm flex justify-between items-center">
         <div>
-          <span className="text-[10px] bg-[#dce9ff] text-[#2f2ebe] px-2 py-0.5 rounded-full font-medium">
-            {history.aiModel}
-          </span>
+          <Badge variant="primary">{history.aiModel}</Badge>
           <h2 className="font-bold text-lg text-[#0b1c30] mt-1">
             {history.title || '생성 결과'}
           </h2>
@@ -222,29 +247,25 @@ export default function ResultClientView({ history, userEmail }: ResultClientVie
 
       {/* Action Footer Bar */}
       <div className="flex flex-col sm:flex-row gap-3 pt-2">
-        <Link
-          href={reRunUrl}
-          className="flex-1 h-11 bg-[#091426] text-white rounded-xl font-medium text-sm flex items-center justify-center gap-2 hover:bg-[#1e293b] transition-colors shadow-sm"
-        >
-          <span className="material-symbols-outlined text-sm">refresh</span>
-          <span>다시 실행 / 다른 변수 적용</span>
+        <Link href={reRunUrl} className="flex-1">
+          <Button variant="primary" icon="refresh" className="w-full">
+            다시 실행 / 다른 변수 적용
+          </Button>
         </Link>
 
-        <button
-          onClick={handleDownloadTxt}
-          className="flex-1 h-11 bg-white border border-[#c5c6cd] text-[#091426] rounded-xl font-medium text-sm flex items-center justify-center gap-2 hover:bg-slate-50 transition-colors shadow-sm"
-        >
-          <span className="material-symbols-outlined text-sm">save_alt</span>
-          <span>TXT로 저장</span>
-        </button>
+        <Button variant="outline" icon="save_alt" onClick={handleDownloadTxt} className="flex-1">
+          TXT로 저장
+        </Button>
 
-        <button
+        <Button
+          variant="outline"
           onClick={handleEmailSend}
-          className="flex-1 h-11 bg-white border border-[#c5c6cd] text-[#091426] rounded-xl font-medium text-sm flex items-center justify-center gap-2 hover:bg-slate-50 transition-colors shadow-sm"
+          isLoading={isSendingEmail}
+          icon="mail"
+          className="flex-1"
         >
-          <span className="material-symbols-outlined text-sm">mail</span>
-          <span>나에게 이메일 발송</span>
-        </button>
+          {isSendingEmail ? '발송 중...' : '나에게 이메일 발송'}
+        </Button>
       </div>
     </div>
   );

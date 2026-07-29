@@ -1,18 +1,17 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/infrastructure/supabase/server';
-import { SupabaseUsageRepository } from '@/infrastructure/repositories/SupabaseUsageRepository';
 import { SupabaseCronLogRepository } from '@/infrastructure/repositories/SupabaseCronLogRepository';
 import { AdminHeader } from '@/presentation/components/admin/AdminHeader';
 import { AdminSubNav } from '@/presentation/components/admin/AdminSubNav';
-import { UsageDashboard } from '@/presentation/components/admin/UsageDashboard';
+import { CronMonitoringDashboard } from '@/presentation/components/admin/CronMonitoringDashboard';
 import { BottomNav } from '@/presentation/components/admin/BottomNav';
 
 export const metadata = {
-  title: '관리자 - 사용량 통계 | 티타임은 즐거워',
-  description: '시스템 전반의 API 호출 및 토큰 사용 현황을 확인합니다.',
+  title: '크론 모니터링 | 관리자 | 티타임은 즐거워',
+  description: 'Vercel Cron 실행 및 자동 동기화 이력을 모니터링합니다.',
 };
 
-export default async function AdminUsagePage() {
+export default async function AdminCronPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -28,18 +27,15 @@ export default async function AdminUsagePage() {
     redirect('/templates');
   }
 
-  const usageRepo = new SupabaseUsageRepository();
-  const initialReport = await usageRepo.getUsageReport('monthly', new Date());
-
   const cronLogRepo = new SupabaseCronLogRepository();
-  const cronLogs = await cronLogRepo.getRecentLogs(10);
+  const cronLogs = await cronLogRepo.getRecentLogs(50);
 
   return (
     <div className="min-h-screen bg-[#f8f9fa] dark:bg-zinc-950 text-zinc-900 dark:text-white flex flex-col font-sans">
       <AdminHeader userEmail={currentUserEmail} userName={userName} userRole={userRole} />
-      <AdminSubNav activeTab="usage" />
-      <main className="flex-1">
-        <UsageDashboard initialReport={initialReport} cronLogs={cronLogs} />
+      <AdminSubNav activeTab="cron" />
+      <main className="flex-1 pb-20 md:pb-8">
+        <CronMonitoringDashboard initialLogs={cronLogs} />
       </main>
       <BottomNav />
     </div>

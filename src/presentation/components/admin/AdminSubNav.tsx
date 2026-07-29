@@ -3,16 +3,16 @@
 import Link from 'next/link';
 
 interface AdminSubNavProps {
-  activeTab: 'users' | 'usage' | 'prompts';
+  activeTab: 'users' | 'usage' | 'prompts' | 'cron';
 }
 
 export function AdminSubNav({ activeTab }: AdminSubNavProps) {
   return (
     <div className="border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 md:px-8">
-      <div className="flex gap-6 text-sm font-semibold max-w-[1280px] mx-auto">
+      <div className="flex gap-6 text-sm font-semibold max-w-[1280px] mx-auto overflow-x-auto">
         <Link
           href="/admin/users"
-          className={`py-3.5 border-b-2 transition-all ${
+          className={`py-3.5 border-b-2 transition-all whitespace-nowrap ${
             activeTab === 'users'
               ? 'border-zinc-900 dark:border-white text-zinc-900 dark:text-white font-bold'
               : 'border-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'
@@ -22,7 +22,7 @@ export function AdminSubNav({ activeTab }: AdminSubNavProps) {
         </Link>
         <Link
           href="/admin/usage"
-          className={`py-3.5 border-b-2 transition-all ${
+          className={`py-3.5 border-b-2 transition-all whitespace-nowrap ${
             activeTab === 'usage'
               ? 'border-zinc-900 dark:border-white text-zinc-900 dark:text-white font-bold'
               : 'border-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'
@@ -32,13 +32,23 @@ export function AdminSubNav({ activeTab }: AdminSubNavProps) {
         </Link>
         <Link
           href="/admin/prompts"
-          className={`py-3.5 border-b-2 transition-all ${
+          className={`py-3.5 border-b-2 transition-all whitespace-nowrap ${
             activeTab === 'prompts'
               ? 'border-zinc-900 dark:border-white text-zinc-900 dark:text-white font-bold'
               : 'border-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'
           }`}
         >
           프롬프트 관리
+        </Link>
+        <Link
+          href="/admin/cron"
+          className={`py-3.5 border-b-2 transition-all whitespace-nowrap ${
+            activeTab === 'cron'
+              ? 'border-zinc-900 dark:border-white text-zinc-900 dark:text-white font-bold'
+              : 'border-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'
+          }`}
+        >
+          크론 모니터링
         </Link>
       </div>
     </div>

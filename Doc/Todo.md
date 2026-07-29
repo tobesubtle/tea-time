@@ -1,8 +1,9 @@
-* ai모델 선택은 템플릿 작성이 아니라 프롬프트 작성시 선택하도록 변경
-* 상단 바에 '프롬프트' 을 클릭하면 사용자가 지금까지 자신이 생성한 프롬프트 목록을 확인하는 기능을 별도로 추가
- - 문자열 검색, 탬플릿별 검색 가능 
-* 프롬프트 작성 화면
- - 모든 입력폼은 필수가 아니며 입력하지 않은 변수는 프롬프트 결과 확인시 변수명으로 출력
- - 탬플릿 원본 미리보기는 선택된 탬플릿 아래에 위치하도록 변경하고, 기본적으로 5줄만 보여준후 클릭시 전체 내용 확인
- - 이전 사용내역에서 값 불러오기 기능은 입력변수 하단에 위치하도록 변경
-* 주 1회 매주 월요일 09시에 gemini모델 변경사항 체크 및 변경사항을 db에 저장하고 프롬프트 작성시 선택한 ai 모델이 최신 모델명으로 자동업데이트 되도록 변경(구현한 내역을 workthrough에 자세히 설명)
+# 할일
+## [완료] 이메일 백그라운드 직접 발송 기능 구현
+## [완료] Vercel 배포 및 도메인/환경변수 설정 가이드 작성
+## [완료] 전체 프로젝트 공통 컴포넌트 통합 및 리팩토링 (`Toast`, `Modal`, `Badge`, `Button`, `Header`)
+## [완료] Vercel 크론 로깅 및 1년 지난 로그 자동 정리 삭제 (Auto Pruning)
+## [완료] 관리자 전용 '크론 모니터링' 탭 (`/admin/cron`) 신설
+## [완료] 전체 기능 테스트 케이스 정의서 작성 ([system_test_cases.md](file:///c:/Users/niceg/OneDrive/문서/Antigravity/my-prompt/Doc/system_test_cases.md))
+## [완료] PRD 명세서 최종 업데이트 ([prd_gemini_prompt_manager_final.md](file:///c:/Users/niceg/OneDrive/문서/Antigravity/my-prompt/Doc/prd_gemini_prompt_manager_final.md))
+## 전체 기능 테스트를 위한 프롬프트 작성

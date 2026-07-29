@@ -19,6 +19,7 @@ export default async function AdminPromptsPage() {
 
   let currentUserEmail = user?.email;
   let userRole = user?.user_metadata?.role || user?.app_metadata?.role || 'user';
+  let userName = user?.user_metadata?.name || user?.email?.split('@')[0];
 
   if (!user) {
     redirect('/login');
@@ -40,7 +41,7 @@ export default async function AdminPromptsPage() {
 
   return (
     <div className="min-h-screen bg-[#f8f9fa] dark:bg-zinc-950 text-zinc-900 dark:text-white flex flex-col font-sans">
-      <AdminHeader userEmail={currentUserEmail} />
+      <AdminHeader userEmail={currentUserEmail} userName={userName} userRole={userRole} />
       <AdminSubNav activeTab="prompts" />
       <main className="flex-1 pb-20 md:pb-8">
         <DeletedPromptList

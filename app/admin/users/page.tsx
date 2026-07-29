@@ -18,6 +18,7 @@ export default async function AdminUsersPage() {
   // Supabase Auth 세션이 없는 경우 mock 쿠키 세션 확인
   let currentUserEmail = user?.email;
   let userRole = user?.user_metadata?.role || user?.app_metadata?.role || 'user';
+  let userName = user?.user_metadata?.name || user?.email?.split('@')[0];
 
   if (!user) {
     // 세션이 없는 비로그인 유저는 로그인 페이지로 리다이렉트
@@ -34,7 +35,7 @@ export default async function AdminUsersPage() {
 
   return (
     <div className="min-h-screen bg-[#f8f9fa] dark:bg-zinc-950 text-zinc-900 dark:text-white flex flex-col font-sans">
-      <AdminHeader userEmail={currentUserEmail} />
+      <AdminHeader userEmail={currentUserEmail} userName={userName} userRole={userRole} />
       <AdminSubNav activeTab="users" />
       <main className="flex-1 pb-20 md:pb-8">
         <UserList initialUsers={users} />

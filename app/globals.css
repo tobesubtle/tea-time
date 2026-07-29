@@ -21,3 +21,43 @@ body {
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
+
+/* PC로 보기 모드 강제 적용 */
+.force-pc-mode {
+  min-width: 1200px !important;
+  overflow-x: auto !important;
+}
+
+.force-pc-mode .md\:hidden {
+  display: none !important;
+}
+
+.force-pc-mode .hidden.md\:flex {
+  display: flex !important;
+}
+
+.force-pc-mode .hidden.md\:inline-block {
+  display: inline-block !important;
+}
+
+.force-pc-mode .hidden.sm\:inline {
+  display: inline !important;
+}
+
+/* 모바일로 보기 모드 강제 적용 */
+.force-mobile-mode {
+  max-width: 480px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  border-left: 1px solid rgba(197, 198, 205, 0.3);
+  border-right: 1px solid rgba(197, 198, 205, 0.3);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.force-mobile-mode .hidden.md\:flex {
+  display: none !important;
+}
+
+.force-mobile-mode .md\:hidden {
+  display: flex !important;
+}
