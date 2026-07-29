@@ -31,15 +31,12 @@ export default async function AdminUsagePage() {
   const usageRepo = new SupabaseUsageRepository();
   const initialReport = await usageRepo.getUsageReport('monthly', new Date());
 
-  const cronLogRepo = new SupabaseCronLogRepository();
-  const cronLogs = await cronLogRepo.getRecentLogs(10);
-
   return (
     <div className="min-h-screen bg-[#f8f9fa] dark:bg-zinc-950 text-zinc-900 dark:text-white flex flex-col font-sans">
       <AdminHeader userEmail={currentUserEmail} userName={userName} userRole={userRole} />
       <AdminSubNav activeTab="usage" />
       <main className="flex-1">
-        <UsageDashboard initialReport={initialReport} cronLogs={cronLogs} />
+        <UsageDashboard initialReport={initialReport} />
       </main>
       <BottomNav />
     </div>

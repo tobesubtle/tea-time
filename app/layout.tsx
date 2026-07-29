@@ -8,8 +8,45 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
 
 export const metadata: Metadata = {
-  title: "티타임은 즐거워 - Gemini 프롬프트 매니저",
-  description: "Gemini AI 프롬프트 템플릿 및 자동화 관리 시스템",
+  metadataBase: new URL('https://tea-time-six.vercel.app'),
+  title: {
+    default: '티타임은 즐거워 | Gemini 프롬프트 매니저',
+    template: '%s | 티타임은 즐거워',
+  },
+  description: 'Gemini AI 기반 프롬프트 템플릿 관리, 변수 입력 자동화, 파일 첨부 및 스마트 실행 서비스',
+  keywords: ['Gemini', '프롬프트', 'AI', '템플릿', '티타임은 즐거워', '프롬프트 매니저', 'Vercel', 'Next.js'],
+  authors: [{ name: 'Tea Time Team' }],
+  creator: 'Tea Time Team',
+  publisher: 'Tea Time',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  openGraph: {
+    title: '티타임은 즐거워 | Gemini 프롬프트 매니저',
+    description: 'Gemini AI 기반 프롬프트 템플릿 관리, 변수 입력 자동화, 파일 첨부 및 스마트 실행 서비스',
+    url: 'https://tea-time-six.vercel.app',
+    siteName: '티타임은 즐거워',
+    locale: 'ko_KR',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '티타임은 즐거워 | Gemini 프롬프트 매니저',
+    description: 'Gemini AI 기반 프롬프트 템플릿 관리 및 스마트 실행 서비스',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 };
 
 export default function RootLayout({
