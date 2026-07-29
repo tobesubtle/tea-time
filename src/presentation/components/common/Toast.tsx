@@ -19,7 +19,7 @@ export function Toast({ message, type = 'success', onClose }: ToastProps) {
 
   return (
     <div
-      className={`fixed bottom-20 left-1/2 transform -translate-x-1/2 ${bgColor} px-4 py-2.5 rounded-xl text-xs font-medium shadow-xl flex items-center gap-2 z-50 animate-bounce transition-all border border-white/10`}
+      className={`fixed bottom-20 left-1/2 transform -translate-x-1/2 ${bgColor} px-4 py-2.5 rounded-xl text-xs font-medium shadow-xl flex items-center gap-2 z-[100] animate-bounce transition-all border border-white/10`}
     >
       <span className="material-symbols-outlined text-sm">{iconName}</span>
       <span>{message}</span>

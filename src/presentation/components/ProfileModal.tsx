@@ -19,6 +19,8 @@ export function ProfileModal({ isOpen, onClose, userEmail, userName, userRole }:
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   const isAdmin = userRole === 'admin';
@@ -27,14 +29,16 @@ export function ProfileModal({ isOpen, onClose, userEmail, userName, userRole }:
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+    setSuccessMessage(null);
 
     if (password && password.length < 6) {
-      setToast({ message: '비밀번호는 최소 6자리 이상이어야 합니다.', type: 'error' });
+      setError('비밀번호는 최소 6자리 이상이어야 합니다.');
       return;
     }
 
     if (password && password !== confirmPassword) {
-      setToast({ message: '비밀번호와 비밀번호 확인이 일치하지 않습니다.', type: 'error' });
+      setError('입력하신 비밀번호와 비밀번호 확인이 일치하지 않습니다.');
       return;
     }
 
@@ -47,16 +51,24 @@ export function ProfileModal({ isOpen, onClose, userEmail, userName, userRole }:
 
       const res = await updateSelfProfileAction(formData);
       if (res.success) {
-        setToast({ message: res.message || '프로필이 수정되었습니다.', type: 'success' });
+        setSuccessMessage(res.message || '프로필이 성공적으로 수정되었습니다.');
         setPassword('');
         setConfirmPassword('');
         setTimeout(() => {
           onClose();
         }, 1200);
       } else {
-        setToast({ message: res.error || '수정 중 오류가 발생했습니다.', type: 'error' });
+        setError(res.error || '수정 중 오류가 발생했습니다.');
       }
     });
+  };
+
+  const handleClose = () => {
+    setError(null);
+    setSuccessMessage(null);
+    setPassword('');
+    setConfirmPassword('');
+    onClose();
   };
 
   return (
@@ -69,8 +81,24 @@ export function ProfileModal({ isOpen, onClose, userEmail, userName, userRole }:
         />
       )}
 
-      <Modal isOpen={isOpen} onClose={onClose} title="내 프로필 정보 수정">
+      <Modal isOpen={isOpen} onClose={handleClose} title="내 프로필 정보 수정">
         <form onSubmit={handleSubmit} className="space-y-4 pt-1">
+          {/* Inline Error Alert Box */}
+          {error && (
+            <div className="p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 rounded-xl flex items-start gap-2 text-rose-700 dark:text-rose-300 text-xs font-medium animate-fade-in">
+              <span className="material-symbols-outlined text-base shrink-0 text-rose-500">error</span>
+              <span>{error}</span>
+            </div>
+          )}
+
+          {/* Inline Success Alert Box */}
+          {successMessage && (
+            <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 rounded-xl flex items-start gap-2 text-emerald-700 dark:text-emerald-300 text-xs font-medium animate-fade-in">
+              <span className="material-symbols-outlined text-base shrink-0 text-emerald-500">check_circle</span>
+              <span>{successMessage}</span>
+            </div>
+          )}
+
           {/* Avatar Preview */}
           <div className="flex items-center gap-4 bg-slate-50 dark:bg-zinc-800/60 p-3.5 rounded-xl border border-slate-200/60 dark:border-zinc-800">
             <div className="w-12 h-12 rounded-full bg-[#6063ee] text-white flex items-center justify-center font-bold text-base shadow-sm shrink-0">
@@ -111,7 +139,10 @@ export function ProfileModal({ isOpen, onClose, userEmail, userName, userRole }:
               type="text"
               required
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value);
+                setError(null);
+              }}
               placeholder="표시될 이름을 입력하세요"
               className="w-full text-xs bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4648d4] focus:outline-none transition-all"
             />
@@ -131,7 +162,10 @@ export function ProfileModal({ isOpen, onClose, userEmail, userName, userRole }:
                 <input
                   type="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setError(null);
+                  }}
                   placeholder="최소 6자리 이상 입력"
                   className="w-full text-xs bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4648d4] focus:outline-none transition-all"
                 />
@@ -144,7 +178,10 @@ export function ProfileModal({ isOpen, onClose, userEmail, userName, userRole }:
                 <input
                   type="password"
                   value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  onChange={(e) => {
+                    setConfirmPassword(e.target.value);
+                    setError(null);
+                  }}
                   placeholder="비밀번호 재입력"
                   className="w-full text-xs bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4648d4] focus:outline-none transition-all"
                 />
@@ -157,7 +194,7 @@ export function ProfileModal({ isOpen, onClose, userEmail, userName, userRole }:
             <Button
               type="button"
               variant="outline"
-              onClick={onClose}
+              onClick={handleClose}
               disabled={isPending}
             >
               취소

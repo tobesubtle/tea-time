@@ -166,7 +166,7 @@ export function UsageDashboard({ initialReport }: UsageDashboardProps) {
           </div>
           <div>
             <span className="text-3xl font-extrabold text-[#162839] dark:text-white tracking-tight">
-              {(report.summary.totalTokens / 1000000).toFixed(1)}M
+              {(report.summary.totalTokens / 1000).toLocaleString('ko-KR', { maximumFractionDigits: 1 })}k
             </span>
             <div className="flex items-center gap-1 mt-1 text-[#7d562d] font-semibold text-xs">
               <TrendingUp className="w-4 h-4" />

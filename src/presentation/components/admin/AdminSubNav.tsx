@@ -3,7 +3,7 @@
 import Link from 'next/link';
 
 interface AdminSubNavProps {
-  activeTab: 'users' | 'usage' | 'prompts' | 'cron';
+  activeTab: 'users' | 'usage' | 'prompts' | 'cron' | 'quota';
 }
 
 export function AdminSubNav({ activeTab }: AdminSubNavProps) {
@@ -49,6 +49,16 @@ export function AdminSubNav({ activeTab }: AdminSubNavProps) {
           }`}
         >
           크론 모니터링
+        </Link>
+        <Link
+          href="/admin/quota"
+          className={`py-3.5 border-b-2 transition-all whitespace-nowrap flex items-center gap-1.5 ${
+            activeTab === 'quota'
+              ? 'border-rose-600 dark:border-rose-400 text-rose-600 dark:text-rose-400 font-bold'
+              : 'border-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'
+          }`}
+        >
+          <span>쿼터/에러 모니터링</span>
         </Link>
       </div>
     </div>

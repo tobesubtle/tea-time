@@ -91,7 +91,7 @@ export async function executePromptAction(formData: FormData) {
   }
 
   // Gemini API 호출
-  const resultText = await runGeminiPrompt(finalPrompt, aiModel);
+  const resultText = await runGeminiPrompt(finalPrompt, aiModel, user.email);
 
   let recordId = draftId;
 

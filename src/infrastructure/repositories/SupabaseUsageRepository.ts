@@ -64,10 +64,8 @@ export class SupabaseUsageRepository implements UsageRepository {
           userEmail: email,
           initials: name.slice(0, 2).toUpperCase(),
           tokenUsage: stats.tokenUsage,
-          formattedTokenUsage: stats.tokenUsage >= 1000000
-            ? `${(stats.tokenUsage / 1000000).toFixed(1)}M`
-            : stats.tokenUsage >= 1000
-            ? `${(stats.tokenUsage / 1000).toFixed(1)}k`
+          formattedTokenUsage: stats.tokenUsage >= 1000
+            ? `${(stats.tokenUsage / 1000).toLocaleString('ko-KR', { maximumFractionDigits: 1 })}k`
             : `${stats.tokenUsage}`,
           tokenPercentage: tokenPercentage,
           callCount: stats.callCount,

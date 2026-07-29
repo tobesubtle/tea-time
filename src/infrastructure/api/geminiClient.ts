@@ -1,7 +1,16 @@
 import { GoogleGenAI } from '@google/genai';
+import { SupabaseQuotaErrorRepository } from '../repositories/SupabaseQuotaErrorRepository';
+import { NodemailerEmailService } from '../email/emailService';
 
-export async function runGeminiPrompt(promptText: string, modelName: string = 'gemini-2.5-flash'): Promise<string> {
-  const apiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+export async function runGeminiPrompt(
+  promptText: string,
+  modelName: string = 'gemini-2.5-flash',
+  userEmail?: string
+): Promise<string> {
+  const apiKey =
+    process.env.GEMINI_API_KEY ||
+    process.env.NEXT_PUBLIC_GEMINI_API_KEY ||
+    process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
 
   if (!apiKey) {
     console.warn('GEMINI_API_KEY is not configured in .env. Returning simulated result for testing.');
@@ -21,6 +30,36 @@ export async function runGeminiPrompt(promptText: string, modelName: string = 'g
     return response.text || '결과가 비어있습니다.';
   } catch (error: any) {
     console.error('Gemini API Error:', error);
-    throw new Error(`Gemini API 호출 실패: ${error.message || error}`);
+    const errorMessage = error.message || String(error);
+
+    // Check if error is related to quota / cost / rate limits / resource exhausted
+    const isQuotaError =
+      /quota|429|RESOURCE_EXHAUSTED|rate limit|credit|exceeded|billing/i.test(errorMessage);
+
+    if (isQuotaError) {
+      // Async record quota error log in DB and notify Admin via email
+      try {
+        const quotaRepo = new SupabaseQuotaErrorRepository();
+        await quotaRepo.createLog({
+          userEmail,
+          modelName,
+          errorMessage,
+          status: 'notified',
+        });
+
+        const emailService = new NodemailerEmailService();
+        await emailService.sendAdminQuotaAlertEmail({
+          userEmail,
+          modelName,
+          errorMessage,
+        });
+      } catch (logErr) {
+        console.error('Failed to log or send email alert for quota error:', logErr);
+      }
+
+      throw new Error(`[Gemini API 쿼터/비용 오류] 사용 가능한 API 쿼터가 초과되었거나 제한에 도달했습니다. 관리자에게 이메일 알림이 발송되었습니다.`);
+    }
+
+    throw new Error(`Gemini API 호출 실패: ${errorMessage}`);
   }
 }
