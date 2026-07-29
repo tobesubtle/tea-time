@@ -6,7 +6,7 @@ export const revalidate = 0;
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { to, subject, text, html } = body;
+    const { to, subject, text, html, filename, attachments } = body;
 
     if (!to || typeof to !== 'string' || !to.includes('@')) {
       return NextResponse.json(
@@ -22,12 +22,26 @@ export async function POST(request: Request) {
       );
     }
 
+    // txt 파일 첨부 준비 (별도 첨부 목록이 없다면 본문 text를 .txt 파일로 자동 첨부)
+    const sanitizedFilename = filename
+      ? (filename.endsWith('.txt') ? filename : `${filename}.txt`)
+      : 'gemini_result.txt';
+
+    const mailAttachments = attachments || [
+      {
+        filename: sanitizedFilename,
+        content: text,
+        contentType: 'text/plain; charset=utf-8',
+      },
+    ];
+
     const emailService = new NodemailerEmailService();
     const result = await emailService.sendEmail({
       to,
       subject,
       text,
       html,
+      attachments: mailAttachments,
     });
 
     return NextResponse.json({

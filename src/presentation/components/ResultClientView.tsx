@@ -113,13 +113,14 @@ export default function ResultClientView({ history, userEmail }: ResultClientVie
           to: userEmail,
           subject: `[Prompt Result] ${history.title || 'Gemini 생성 결과'}`,
           text: resultText,
+          filename: `${history.title || 'gemini_result'}.txt`,
         }),
       });
 
       const data = await response.json();
 
       if (response.ok && data.success) {
-        showToast('이메일이 성공적으로 발송되었습니다.');
+        showToast('이메일 및 .txt 첨부파일이 성공적으로 발송되었습니다.');
       } else {
         showToast(data.error || '이메일 발송 중 오류가 발생했습니다.');
       }

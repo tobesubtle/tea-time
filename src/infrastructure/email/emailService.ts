@@ -1,10 +1,17 @@
 import nodemailer from 'nodemailer';
 
+export interface EmailAttachment {
+  filename: string;
+  content: string | Buffer;
+  contentType?: string;
+}
+
 export interface SendEmailParams {
   to: string;
   subject: string;
   text: string;
   html?: string;
+  attachments?: EmailAttachment[];
 }
 
 export class NodemailerEmailService {
@@ -32,7 +39,7 @@ export class NodemailerEmailService {
     });
   }
 
-  async sendEmail({ to, subject, text, html }: SendEmailParams): Promise<{ success: boolean; messageId?: string }> {
+  async sendEmail({ to, subject, text, html, attachments }: SendEmailParams): Promise<{ success: boolean; messageId?: string }> {
     const transporter = this.createTransporter();
     const from = process.env.SMTP_FROM || `"Tea Time Prompt" <${process.env.SMTP_USER}>`;
 
@@ -42,6 +49,7 @@ export class NodemailerEmailService {
       subject,
       text,
       html: html || text.replace(/\n/g, '<br />'),
+      attachments,
     });
 
     return {
