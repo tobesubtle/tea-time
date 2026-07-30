@@ -10,6 +10,7 @@ export interface AttachedFile {
   type: string;
   source: 'local' | 'gdrive';
   url?: string;
+  content?: string;
 }
 
 export function FileUploadSection() {
@@ -56,6 +57,19 @@ export function FileUploadSection() {
 
     for (const file of selectedFiles) {
       try {
+        let content: string | undefined;
+        if (
+          file.type.includes('text') ||
+          file.name.endsWith('.txt') ||
+          file.name.endsWith('.csv') ||
+          file.name.endsWith('.json') ||
+          file.name.endsWith('.md')
+        ) {
+          try {
+            content = await file.text();
+          } catch {}
+        }
+
         const formData = new FormData();
         formData.append('file', file);
 
@@ -73,6 +87,7 @@ export function FileUploadSection() {
             type: data.type || file.type || 'document',
             source: 'local',
             url: data.url,
+            content,
           });
         } else {
           // Fallback if upload fails
@@ -82,6 +97,7 @@ export function FileUploadSection() {
             size: file.size,
             type: file.type || 'document',
             source: 'local',
+            content,
           });
         }
       } catch {

@@ -8,6 +8,105 @@ export interface AttachedFileInfo {
   source?: string;
   type?: string;
   size?: number;
+  content?: string;
+}
+
+async function fetchFileTextContent(file: AttachedFileInfo): Promise<string | null> {
+  // 1. 이미 content 텍스트가 클라이언트 등에서 전송된 경우
+  if (file.content && file.content.trim()) {
+    return file.content;
+  }
+
+  if (!file.url) return null;
+
+  try {
+    // 2. Google Drive 문서/시트/파일 URL에서 텍스트 추출 시도
+    if (file.source === 'gdrive' || file.url.includes('docs.google.com') || file.url.includes('drive.google.com')) {
+      const match = file.url.match(/\/d\/([a-zA-Z0-9_-]+)/) || file.url.match(/id=([a-zA-Z0-9_-]+)/);
+      if (match && match[1]) {
+        const fileId = match[1];
+
+        // Google Docs export (txt)
+        if (file.url.includes('document')) {
+          const exportUrl = `https://docs.google.com/document/d/${fileId}/export?format=txt`;
+          const res = await fetch(exportUrl, {
+            headers: { 'User-Agent': 'Mozilla/5.0' },
+            cache: 'no-store',
+          });
+          if (res.ok) {
+            const txt = await res.text();
+            if (!txt.includes('<!DOCTYPE html>') && !txt.includes('<html')) {
+              return txt;
+            }
+          }
+        }
+
+        // Google Sheets export (csv)
+        if (file.url.includes('spreadsheet')) {
+          const exportUrl = `https://docs.google.com/spreadsheets/d/${fileId}/export?format=csv`;
+          const res = await fetch(exportUrl, {
+            headers: { 'User-Agent': 'Mozilla/5.0' },
+            cache: 'no-store',
+          });
+          if (res.ok) {
+            const txt = await res.text();
+            if (!txt.includes('<!DOCTYPE html>') && !txt.includes('<html')) {
+              return txt;
+            }
+          }
+        }
+
+        // Direct download fallback
+        const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+        const res = await fetch(downloadUrl, {
+          headers: { 'User-Agent': 'Mozilla/5.0' },
+          cache: 'no-store',
+        });
+        if (res.ok) {
+          const txt = await res.text();
+          if (!txt.includes('<!DOCTYPE html>') && !txt.includes('<html')) {
+            return txt;
+          }
+        }
+      }
+    }
+
+    // 3. 일반 공개 URL (Supabase 스토리지 등)
+    if (file.url.startsWith('http')) {
+      const res = await fetch(file.url, { cache: 'no-store' });
+      if (res.ok) {
+        const contentType = res.headers.get('content-type') || '';
+        if (contentType.includes('text') || contentType.includes('json') || contentType.includes('csv')) {
+          const txt = await res.text();
+          if (!txt.includes('<!DOCTYPE html>')) {
+            return txt;
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.warn(`[geminiClient] Failed to fetch content for ${file.name}:`, err);
+  }
+
+  return null;
+}
+
+async function fetchPdfInlineData(file: AttachedFileInfo): Promise<{ mimeType: string; data: string } | null> {
+  if (!file.url) return null;
+  try {
+    const res = await fetch(file.url, { cache: 'no-store' });
+    if (res.ok) {
+      const arrayBuffer = await res.arrayBuffer();
+      const base64 = Buffer.from(arrayBuffer).toString('base64');
+      return {
+        mimeType: 'application/pdf',
+        data: base64,
+      };
+    }
+  } catch (err) {
+    console.warn(`[geminiClient] Failed to fetch PDF inline data for ${file.name}:`, err);
+  }
+  return null;
 }
 
 export async function runGeminiPrompt(
@@ -22,17 +121,44 @@ export async function runGeminiPrompt(
     process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
 
   let promptWithAttachments = promptText;
-  if (attachedFiles && attachedFiles.length > 0) {
-    const attachmentSection = attachedFiles
-      .map((file, idx) => {
-        const isDrive = file.source === 'gdrive';
-        const label = isDrive ? 'Google Drive 문서' : '첨부 파일';
-        const linkInfo = file.url ? ` (참조/링크: ${file.url})` : '';
-        return `${idx + 1}. [${label}] ${file.name}${linkInfo}`;
-      })
-      .join('\n');
+  const pdfInlineParts: Array<{ inlineData: { mimeType: string; data: string } }> = [];
 
-    promptWithAttachments = `[첨부 파일 및 연동 문서 정보]\n아래는 사용자가 프롬프트 요청과 함께 첨부한 구글 드라이브 및 문서 파일 목록입니다. 첨부된 문서를 참고하여 아래 요청에 대해 답변해 주세요:\n\n${attachmentSection}\n\n---\n\n[요청 프롬프트]\n${promptText}`;
+  if (attachedFiles && attachedFiles.length > 0) {
+    const attachmentBlocks: string[] = [];
+
+    for (let idx = 0; idx < attachedFiles.length; idx++) {
+      const file = attachedFiles[idx];
+      const isDrive = file.source === 'gdrive';
+      const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+      const label = isDrive ? 'Google Drive 문서' : '첨부 파일';
+
+      if (isPdf && file.url) {
+        const pdfInlineData = await fetchPdfInlineData(file);
+        if (pdfInlineData) {
+          pdfInlineParts.push({ inlineData: pdfInlineData });
+          attachmentBlocks.push(
+            `[${label} #${idx + 1}: ${file.name} (PDF 문서)]\n(본 PDF 원본 바이너리 파일이 멀티모달 데이터로 Gemini 모델에 직접 입력 전송되었습니다.)`
+          );
+          continue;
+        }
+      }
+
+      const fetchedContent = await fetchFileTextContent(file);
+
+      if (fetchedContent && fetchedContent.trim()) {
+        attachmentBlocks.push(
+          `[${label} #${idx + 1}: ${file.name}]\n--- 파일 본문 텍스트 내용 시작 ---\n${fetchedContent.trim()}\n--- 파일 본문 텍스트 내용 끝 ---`
+        );
+      } else {
+        const linkInfo = file.url ? ` (참조/링크: ${file.url})` : '';
+        attachmentBlocks.push(
+          `[${label} #${idx + 1}: ${file.name}${linkInfo}]\n(참고: 비공개 공유 설정 문서이거나 텍스트 직렬화가 불가능하여 문서 메타데이터와 참조 링크 정보가 전송되었습니다.)`
+        );
+      }
+    }
+
+    const attachmentSection = attachmentBlocks.join('\n\n');
+    promptWithAttachments = `[첨부 파일 및 구글 드라이브 문서 데이터]\n아래는 사용자가 프롬프트 요청과 함께 첨부한 구글 드라이브 및 문서 파일 데이터입니다. 첨부된 파일과 본문 데이터를 정독하여 아래 프롬프트 요청에 대해 정확히 분석/작성해 주세요:\n\n${attachmentSection}\n\n==================================================\n\n[요청 프롬프트]\n${promptText}`;
   }
 
   if (!apiKey) {
@@ -48,9 +174,17 @@ export async function runGeminiPrompt(
     
     // SDK 표준 Gemini API 호출
     const targetModel = modelName.includes('gemini') ? modelName : 'gemini-2.5-flash';
+
+    let finalContents: any;
+    if (pdfInlineParts.length > 0) {
+      finalContents = [...pdfInlineParts, { text: promptWithAttachments }];
+    } else {
+      finalContents = promptWithAttachments;
+    }
+
     const response = await ai.models.generateContent({
       model: targetModel,
-      contents: promptWithAttachments,
+      contents: finalContents,
     });
 
     return response.text || '결과가 비어있습니다.';
