@@ -119,28 +119,18 @@ export default async function PromptRunPage({ searchParams }: PageProps) {
                         )}
                       </div>
 
-                      {file.source === 'gdrive' && file.url ? (
+                      {file.url ? (
                         <a
                           href={file.url}
                           target="_blank"
                           rel="noreferrer"
-                          className="px-3 py-1 bg-white border border-green-600 text-green-700 hover:bg-green-50 rounded-lg text-xs font-medium transition-colors flex items-center gap-1 shrink-0"
-                        >
-                          <span className="material-symbols-outlined text-xs">open_in_new</span>
-                          <span>구글 드라이브 열기</span>
-                        </a>
-                      ) : (
-                        <a
-                          href={`data:text/plain;charset=utf-8,${encodeURIComponent(
-                            `[첨부 파일: ${file.name}]\n본 파일은 프롬프트 작성을 위해 첨부된 로컬 파일 문서입니다.`
-                          )}`}
                           download={file.name}
                           className="px-3 py-1 bg-white border border-[#c5c6cd] text-[#0b1c30] hover:bg-slate-50 rounded-lg text-xs font-medium transition-colors flex items-center gap-1 shrink-0"
                         >
                           <span className="material-symbols-outlined text-xs">download</span>
                           <span>다운로드</span>
                         </a>
-                      )}
+                      ) : null}
                     </div>
                   ))}
                 </div>

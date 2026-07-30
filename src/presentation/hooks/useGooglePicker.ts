@@ -14,6 +14,7 @@ export interface GooglePickerDocument {
   name: string;
   url: string;
   mimeType?: string;
+  accessToken?: string;
 }
 
 export function useGooglePicker(onPicked: (doc: GooglePickerDocument) => void) {
@@ -111,6 +112,7 @@ export function useGooglePicker(onPicked: (doc: GooglePickerDocument) => void) {
                       name: doc.name,
                       url: doc.url || `https://drive.google.com/file/d/${doc.id}/view`,
                       mimeType: doc.mimeType,
+                      accessToken: response.access_token,
                     });
                   }
                 }

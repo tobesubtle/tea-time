@@ -11,6 +11,7 @@ export interface AttachedFile {
   source: 'local' | 'gdrive';
   url?: string;
   content?: string;
+  pdfBase64?: string;
 }
 
 export function FileUploadSection() {
@@ -21,14 +22,98 @@ export function FileUploadSection() {
   const [driveFileName, setDriveFileName] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleGoogleDrivePicked = useCallback((doc: { id: string; name: string; url: string }) => {
+  const handleGoogleDrivePicked = useCallback(async (doc: { id: string; name: string; url: string; mimeType?: string; accessToken?: string }) => {
+    setIsUploading(true);
+    let uploadedUrl = doc.url;
+    let extractedContent: string | undefined;
+    let extractedPdfBase64: string | undefined;
+
+    if (doc.accessToken && doc.id) {
+      try {
+        let blobToUpload: Blob | null = null;
+        let fileNameToUpload = doc.name;
+        let mimeTypeToUpload = doc.mimeType || 'application/octet-stream';
+
+        // 1. Google Docs (text/plain export)
+        if (doc.mimeType === 'application/vnd.google-apps.document') {
+          const res = await fetch(`https://www.googleapis.com/drive/v3/files/${doc.id}/export?mimeType=text/plain`, {
+            headers: { Authorization: `Bearer ${doc.accessToken}` },
+          });
+          if (res.ok) {
+            extractedContent = await res.text();
+            blobToUpload = new Blob([extractedContent], { type: 'text/plain;charset=utf-8' });
+            if (!fileNameToUpload.endsWith('.txt')) fileNameToUpload += '.txt';
+            mimeTypeToUpload = 'text/plain';
+          }
+        }
+        // 2. Google Sheets (text/csv export)
+        else if (doc.mimeType === 'application/vnd.google-apps.spreadsheet') {
+          const res = await fetch(`https://www.googleapis.com/drive/v3/files/${doc.id}/export?mimeType=text/csv`, {
+            headers: { Authorization: `Bearer ${doc.accessToken}` },
+          });
+          if (res.ok) {
+            extractedContent = await res.text();
+            blobToUpload = new Blob([extractedContent], { type: 'text/csv;charset=utf-8' });
+            if (!fileNameToUpload.endsWith('.csv')) fileNameToUpload += '.csv';
+            mimeTypeToUpload = 'text/csv';
+          }
+        }
+        // 3. PDF 또는 일반 바이너리 파일
+        else {
+          const res = await fetch(`https://www.googleapis.com/drive/v3/files/${doc.id}?alt=media`, {
+            headers: { Authorization: `Bearer ${doc.accessToken}` },
+          });
+          if (res.ok) {
+            blobToUpload = await res.blob();
+            const isPdf = doc.mimeType === 'application/pdf' || doc.name.toLowerCase().endsWith('.pdf');
+            if (isPdf) {
+              const arrayBuffer = await blobToUpload.arrayBuffer();
+              const bytes = new Uint8Array(arrayBuffer);
+              let binary = '';
+              for (let i = 0; i < bytes.byteLength; i++) {
+                binary += String.fromCharCode(bytes[i]);
+              }
+              extractedPdfBase64 = btoa(binary);
+            } else {
+              const textStr = await blobToUpload.text();
+              if (!textStr.includes('<!DOCTYPE html>')) {
+                extractedContent = textStr;
+              }
+            }
+          }
+        }
+
+        // Supabase 스토리지 버킷에 이관 업로드
+        if (blobToUpload) {
+          const fileToUpload = new File([blobToUpload], fileNameToUpload, { type: mimeTypeToUpload });
+          const uploadFormData = new FormData();
+          uploadFormData.append('file', fileToUpload);
+
+          const uploadRes = await fetch('/api/upload', {
+            method: 'POST',
+            body: uploadFormData,
+          });
+          const uploadData = await uploadRes.json();
+          if (uploadData.success && uploadData.url) {
+            uploadedUrl = uploadData.url;
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to fetch and upload Google Drive file to Supabase storage:', err);
+      } finally {
+        setIsUploading(false);
+      }
+    }
+
     const newFile: AttachedFile = {
       id: `gdrive-${Date.now()}-${Math.random()}`,
       name: doc.name,
       size: 1024 * 50,
-      type: 'gdrive',
+      type: doc.mimeType || 'gdrive',
       source: 'gdrive',
-      url: doc.url,
+      url: uploadedUrl,
+      content: extractedContent,
+      pdfBase64: extractedPdfBase64,
     };
     setFiles((prev) => [...prev, newFile]);
   }, []);
@@ -58,7 +143,19 @@ export function FileUploadSection() {
     for (const file of selectedFiles) {
       try {
         let content: string | undefined;
-        if (
+        let pdfBase64: string | undefined;
+
+        if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+          try {
+            const arrayBuffer = await file.arrayBuffer();
+            const bytes = new Uint8Array(arrayBuffer);
+            let binary = '';
+            for (let i = 0; i < bytes.byteLength; i++) {
+              binary += String.fromCharCode(bytes[i]);
+            }
+            pdfBase64 = btoa(binary);
+          } catch {}
+        } else if (
           file.type.includes('text') ||
           file.name.endsWith('.txt') ||
           file.name.endsWith('.csv') ||
@@ -88,6 +185,7 @@ export function FileUploadSection() {
             source: 'local',
             url: data.url,
             content,
+            pdfBase64,
           });
         } else {
           // Fallback if upload fails
@@ -98,6 +196,7 @@ export function FileUploadSection() {
             type: file.type || 'document',
             source: 'local',
             content,
+            pdfBase64,
           });
         }
       } catch {

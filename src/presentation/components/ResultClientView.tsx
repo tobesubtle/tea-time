@@ -195,6 +195,11 @@ export default function ResultClientView({ history, userEmail }: ResultClientVie
                     {file.source === 'gdrive' ? 'add_to_drive' : 'description'}
                   </span>
                   <span className="font-medium text-[#0b1c30] truncate">{file.name}</span>
+                  {file.source === 'gdrive' && (
+                    <span className="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded font-medium shrink-0">
+                      Google Drive
+                    </span>
+                  )}
                 </div>
 
                 {file.url ? (
@@ -202,13 +207,11 @@ export default function ResultClientView({ history, userEmail }: ResultClientVie
                     href={file.url}
                     target="_blank"
                     rel="noreferrer"
-                    download={file.source !== 'gdrive' ? file.name : undefined}
+                    download={file.name}
                     className="px-3 py-1 bg-white border border-[#c5c6cd] text-[#0b1c30] hover:bg-slate-50 rounded-lg text-xs font-medium transition-colors flex items-center gap-1 shrink-0"
                   >
-                    <span className="material-symbols-outlined text-xs">
-                      {file.source === 'gdrive' ? 'open_in_new' : 'download'}
-                    </span>
-                    <span>{file.source === 'gdrive' ? '열기' : '다운로드'}</span>
+                    <span className="material-symbols-outlined text-xs">download</span>
+                    <span>다운로드</span>
                   </a>
                 ) : null}
               </div>

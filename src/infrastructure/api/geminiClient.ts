@@ -9,78 +9,26 @@ export interface AttachedFileInfo {
   type?: string;
   size?: number;
   content?: string;
+  pdfBase64?: string;
 }
 
 async function fetchFileTextContent(file: AttachedFileInfo): Promise<string | null> {
   // 1. 이미 content 텍스트가 클라이언트 등에서 전송된 경우
-  if (file.content && file.content.trim()) {
+  if (file.content && file.content.trim() && !file.content.startsWith('JVBERi')) {
     return file.content;
   }
 
   if (!file.url) return null;
 
   try {
-    // 2. Google Drive 문서/시트/파일 URL에서 텍스트 추출 시도
-    if (file.source === 'gdrive' || file.url.includes('docs.google.com') || file.url.includes('drive.google.com')) {
-      const match = file.url.match(/\/d\/([a-zA-Z0-9_-]+)/) || file.url.match(/id=([a-zA-Z0-9_-]+)/);
-      if (match && match[1]) {
-        const fileId = match[1];
-
-        // Google Docs export (txt)
-        if (file.url.includes('document')) {
-          const exportUrl = `https://docs.google.com/document/d/${fileId}/export?format=txt`;
-          const res = await fetch(exportUrl, {
-            headers: { 'User-Agent': 'Mozilla/5.0' },
-            cache: 'no-store',
-          });
-          if (res.ok) {
-            const txt = await res.text();
-            if (!txt.includes('<!DOCTYPE html>') && !txt.includes('<html')) {
-              return txt;
-            }
-          }
-        }
-
-        // Google Sheets export (csv)
-        if (file.url.includes('spreadsheet')) {
-          const exportUrl = `https://docs.google.com/spreadsheets/d/${fileId}/export?format=csv`;
-          const res = await fetch(exportUrl, {
-            headers: { 'User-Agent': 'Mozilla/5.0' },
-            cache: 'no-store',
-          });
-          if (res.ok) {
-            const txt = await res.text();
-            if (!txt.includes('<!DOCTYPE html>') && !txt.includes('<html')) {
-              return txt;
-            }
-          }
-        }
-
-        // Direct download fallback
-        const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
-        const res = await fetch(downloadUrl, {
-          headers: { 'User-Agent': 'Mozilla/5.0' },
-          cache: 'no-store',
-        });
-        if (res.ok) {
-          const txt = await res.text();
-          if (!txt.includes('<!DOCTYPE html>') && !txt.includes('<html')) {
-            return txt;
-          }
-        }
-      }
-    }
-
-    // 3. 일반 공개 URL (Supabase 스토리지 등)
-    if (file.url.startsWith('http')) {
-      const res = await fetch(file.url, { cache: 'no-store' });
-      if (res.ok) {
-        const contentType = res.headers.get('content-type') || '';
-        if (contentType.includes('text') || contentType.includes('json') || contentType.includes('csv')) {
-          const txt = await res.text();
-          if (!txt.includes('<!DOCTYPE html>')) {
-            return txt;
-          }
+    // 2. Supabase 스토리지 URL 또는 공개 HTTP URL에서 텍스트 수신
+    const res = await fetch(file.url, { cache: 'no-store' });
+    if (res.ok) {
+      const contentType = res.headers.get('content-type') || '';
+      if (contentType.includes('text') || contentType.includes('json') || contentType.includes('csv') || file.url.endsWith('.txt') || file.url.endsWith('.csv')) {
+        const txt = await res.text();
+        if (!txt.includes('<!DOCTYPE html>')) {
+          return txt;
         }
       }
     }
@@ -92,16 +40,29 @@ async function fetchFileTextContent(file: AttachedFileInfo): Promise<string | nu
 }
 
 async function fetchPdfInlineData(file: AttachedFileInfo): Promise<{ mimeType: string; data: string } | null> {
+  // 1. 클라이언트(Google Picker 등)에서 이미 pdfBase64가 추출된 경우
+  if (file.pdfBase64 && file.pdfBase64.trim()) {
+    return { mimeType: 'application/pdf', data: file.pdfBase64 };
+  }
+  if (file.content && file.content.startsWith('JVBERi')) {
+    return { mimeType: 'application/pdf', data: file.content };
+  }
+
   if (!file.url) return null;
+
   try {
+    // 2. Supabase 스토리지 URL에서 PDF 바이너리 수신
     const res = await fetch(file.url, { cache: 'no-store' });
     if (res.ok) {
       const arrayBuffer = await res.arrayBuffer();
-      const base64 = Buffer.from(arrayBuffer).toString('base64');
-      return {
-        mimeType: 'application/pdf',
-        data: base64,
-      };
+      const buffer = Buffer.from(arrayBuffer);
+      if (buffer.toString('ascii', 0, 4) === '%PDF') {
+        const base64 = buffer.toString('base64');
+        return {
+          mimeType: 'application/pdf',
+          data: base64,
+        };
+      }
     }
   } catch (err) {
     console.warn(`[geminiClient] Failed to fetch PDF inline data for ${file.name}:`, err);
@@ -130,9 +91,9 @@ export async function runGeminiPrompt(
       const file = attachedFiles[idx];
       const isDrive = file.source === 'gdrive';
       const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
-      const label = isDrive ? 'Google Drive 문서' : '첨부 파일';
+      const label = isDrive ? 'Google Drive 문서 (Supabase 스토리지 저장됨)' : '첨부 파일';
 
-      if (isPdf && file.url) {
+      if (isPdf) {
         const pdfInlineData = await fetchPdfInlineData(file);
         if (pdfInlineData) {
           pdfInlineParts.push({ inlineData: pdfInlineData });
@@ -150,9 +111,9 @@ export async function runGeminiPrompt(
           `[${label} #${idx + 1}: ${file.name}]\n--- 파일 본문 텍스트 내용 시작 ---\n${fetchedContent.trim()}\n--- 파일 본문 텍스트 내용 끝 ---`
         );
       } else {
-        const linkInfo = file.url ? ` (참조/링크: ${file.url})` : '';
+        const linkInfo = file.url ? ` (다운로드/참조 URL: ${file.url})` : '';
         attachmentBlocks.push(
-          `[${label} #${idx + 1}: ${file.name}${linkInfo}]\n(참고: 비공개 공유 설정 문서이거나 텍스트 직렬화가 불가능하여 문서 메타데이터와 참조 링크 정보가 전송되었습니다.)`
+          `[${label} #${idx + 1}: ${file.name}${linkInfo}]`
         );
       }
     }
