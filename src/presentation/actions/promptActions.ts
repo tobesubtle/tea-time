@@ -83,6 +83,7 @@ export async function executePromptAction(formData: FormData) {
   }
 
   const variablesRaw = formData.get('inputVariables') as string;
+  const attachedFilesJson = formData.get('attachedFilesJson') as string;
   let inputVariables: Record<string, string> = {};
   if (variablesRaw) {
     try {
@@ -90,8 +91,21 @@ export async function executePromptAction(formData: FormData) {
     } catch {}
   }
 
-  // Gemini API 호출
-  const resultText = await runGeminiPrompt(finalPrompt, aiModel, user.email);
+  let attachedFiles: Array<{ name: string; url?: string; source?: string; type?: string; size?: number }> = [];
+  if (inputVariables._attachedFiles) {
+    try {
+      attachedFiles = JSON.parse(inputVariables._attachedFiles);
+    } catch {}
+  }
+
+  if (attachedFiles.length === 0 && attachedFilesJson) {
+    try {
+      attachedFiles = JSON.parse(attachedFilesJson);
+    } catch {}
+  }
+
+  // Gemini API 호출 (첨부파일 연동)
+  const resultText = await runGeminiPrompt(finalPrompt, aiModel, user.email, attachedFiles);
 
   let recordId = draftId;
 

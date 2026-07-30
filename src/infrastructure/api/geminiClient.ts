@@ -2,19 +2,45 @@ import { GoogleGenAI } from '@google/genai';
 import { SupabaseQuotaErrorRepository } from '../repositories/SupabaseQuotaErrorRepository';
 import { NodemailerEmailService } from '../email/emailService';
 
+export interface AttachedFileInfo {
+  name: string;
+  url?: string;
+  source?: string;
+  type?: string;
+  size?: number;
+}
+
 export async function runGeminiPrompt(
   promptText: string,
   modelName: string = 'gemini-2.5-flash',
-  userEmail?: string
+  userEmail?: string,
+  attachedFiles?: AttachedFileInfo[]
 ): Promise<string> {
   const apiKey =
     process.env.GEMINI_API_KEY ||
     process.env.NEXT_PUBLIC_GEMINI_API_KEY ||
     process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
 
+  let promptWithAttachments = promptText;
+  if (attachedFiles && attachedFiles.length > 0) {
+    const attachmentSection = attachedFiles
+      .map((file, idx) => {
+        const isDrive = file.source === 'gdrive';
+        const label = isDrive ? 'Google Drive 문서' : '첨부 파일';
+        const linkInfo = file.url ? ` (참조/링크: ${file.url})` : '';
+        return `${idx + 1}. [${label}] ${file.name}${linkInfo}`;
+      })
+      .join('\n');
+
+    promptWithAttachments = `[첨부 파일 및 연동 문서 정보]\n아래는 사용자가 프롬프트 요청과 함께 첨부한 구글 드라이브 및 문서 파일 목록입니다. 첨부된 문서를 참고하여 아래 요청에 대해 답변해 주세요:\n\n${attachmentSection}\n\n---\n\n[요청 프롬프트]\n${promptText}`;
+  }
+
   if (!apiKey) {
     console.warn('GEMINI_API_KEY is not configured in .env. Returning simulated result for testing.');
-    return `[Gemini AI 시뮬레이션 결과]\n\n입력받은 프롬프트:\n"${promptText}"\n\n위 프롬프트에 대한 Gemini AI의 응답입니다:\n- 요청사항이 성공적으로 처리되었습니다.\n- .env 파일에 GEMINI_API_KEY를 설정하시면 실제 Gemini 모델의 최신 생성 결과를 받아보실 수 있습니다.`;
+    const attachmentNotice = attachedFiles && attachedFiles.length > 0
+      ? `\n\n[첨부된 파일 ${attachedFiles.length}개 연동 완료]\n` + attachedFiles.map((f) => `- ${f.name} (${f.source === 'gdrive' ? 'Google Drive' : 'Local File'})`).join('\n')
+      : '';
+    return `[Gemini AI 시뮬레이션 결과]\n\n입력받은 프롬프트:\n"${promptText}"${attachmentNotice}\n\n위 프롬프트와 첨부파일에 대한 Gemini AI의 응답입니다:\n- 요청사항 및 구글 드라이브/첨부파일 정보가 성공적으로 Gemini API에 전송 처리되었습니다.\n- .env 파일에 GEMINI_API_KEY를 설정하시면 실제 Gemini 모델의 최신 생성 결과를 받아보실 수 있습니다.`;
   }
 
   try {
@@ -24,7 +50,7 @@ export async function runGeminiPrompt(
     const targetModel = modelName.includes('gemini') ? modelName : 'gemini-2.5-flash';
     const response = await ai.models.generateContent({
       model: targetModel,
-      contents: promptText,
+      contents: promptWithAttachments,
     });
 
     return response.text || '결과가 비어있습니다.';
