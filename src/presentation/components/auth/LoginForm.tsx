@@ -3,6 +3,8 @@
 import { useState, useTransition } from 'react';
 import { Lock, ArrowRight, Coffee, Loader2 } from 'lucide-react';
 import { loginAction } from '@/app/auth/actions';
+import { FormField } from '@/src/presentation/components/common/FormField';
+import { FormErrorAlert } from '@/src/presentation/components/common/FormErrorAlert';
 
 export function LoginForm() {
   const [email, setEmail] = useState('');
@@ -42,41 +44,27 @@ export function LoginForm() {
         </p>
 
         {/* Error Notification */}
-        {errorMsg && (
-          <div className="w-full mb-6 p-3 rounded-lg bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800 text-xs text-red-600 dark:text-red-400 font-medium">
-            {errorMsg}
-          </div>
-        )}
+        <FormErrorAlert message={errorMsg} className="mb-6" />
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="w-full space-y-4">
-          <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-              이메일 주소
-            </label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="이메일을 입력하세요"
-              className="w-full px-3.5 py-2.5 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-slate-800 transition-all"
-            />
-          </div>
+          <FormField
+            label="이메일 주소"
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="이메일을 입력하세요"
+          />
 
-          <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-              비밀번호
-            </label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="비밀번호를 입력하세요"
-              className="w-full px-3.5 py-2.5 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-slate-800 transition-all"
-            />
-          </div>
+          <FormField
+            label="비밀번호"
+            type="password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="비밀번호를 입력하세요"
+          />
 
           <button
             type="submit"

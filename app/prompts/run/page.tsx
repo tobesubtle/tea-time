@@ -1,9 +1,10 @@
-import { SubmitButtonWithLoading } from '@/presentation/components/common/SubmitButtonWithLoading';
+import { PromptRunActions } from '@/presentation/components/PromptRunActions';
 import Link from 'next/link';
 import { createClient } from '@/infrastructure/supabase/server';
 import Header from '@/presentation/components/Header';
 import { executePromptAction } from '@/presentation/actions/promptActions';
 import { SupabasePromptHistoryRepository } from '@/infrastructure/repositories/SupabasePromptHistoryRepository';
+import { getActiveGeminiModels } from '@/infrastructure/supabase/getGeminiModels';
 
 export const revalidate = 0;
 
@@ -45,6 +46,9 @@ export default async function PromptRunPage({ searchParams }: PageProps) {
   const userRole = user?.user_metadata?.role || 'editor';
   const userName = user?.user_metadata?.name;
 
+  // DB에서 활성화된 Gemini 모델 목록 가져오기
+  const availableModels = await getActiveGeminiModels();
+
   return (
     <div className="min-h-screen flex flex-col bg-[#f8f9ff]">
       <Header userRole={userRole} userEmail={user?.email} userName={userName} />
@@ -71,7 +75,6 @@ export default async function PromptRunPage({ searchParams }: PageProps) {
             <input type="hidden" name="draftId" value={draftId} />
             <input type="hidden" name="templateId" value={templateId} />
             <input type="hidden" name="title" value={title} />
-            <input type="hidden" name="aiModel" value={aiModel} />
             <input type="hidden" name="inputVariables" value={variables} />
 
             {/* Prompt Title Display Card */}
@@ -157,14 +160,8 @@ export default async function PromptRunPage({ searchParams }: PageProps) {
               />
             </div>
 
-            {/* Action Button with Loading Spinner */}
-            <SubmitButtonWithLoading
-              label="Gemini AI 실행하기"
-              loadingLabel="Gemini AI 답변 생성 중..."
-              overlayMessage="Gemini AI가 답변을 생성하고 있습니다..."
-              overlaySubMessage="요청 프롬프트를 분석하고 데이터를 처리하는 중입니다."
-              icon="send"
-            />
+            {/* Action Buttons & AI Model Selection */}
+            <PromptRunActions models={availableModels} defaultModelId={aiModel} />
           </form>
         </div>
       </main>

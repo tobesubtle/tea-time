@@ -2,45 +2,66 @@
 
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
-import { createClient } from '@/infrastructure/supabase/server';
-import { SupabaseUserRepository } from '@/infrastructure/repositories/SupabaseUserRepository';
-import { UserRole } from '@/domain/entities/User';
+import { createClient } from '@/src/infrastructure/supabase/server';
+import { SupabaseUserRepository } from '@/src/infrastructure/repositories/SupabaseUserRepository';
+import { CreateUserInput, UpdateUserInput, UserRole } from '@/src/domain/entities/User';
 
 const userRepository = new SupabaseUserRepository();
 
-export async function createUserAction(prevState: any, formData: FormData) {
-  const name = formData.get('name') as string;
-  const email = formData.get('email') as string;
-  const role = (formData.get('role') as UserRole) || 'editor';
-
-  if (!email) {
-    return { error: '이메일 주소는 필수입니다.' };
-  }
-
+export async function createUserAction(inputOrPrevState: CreateUserInput | unknown, formData?: FormData) {
   try {
-    await userRepository.createUser({
-      name,
-      email,
-      role,
-    });
-  } catch (err: any) {
-    return { error: err.message || '사용자 생성 중 오류가 발생했습니다.' };
-  }
+    if (formData instanceof FormData) {
+      const name = formData.get('name') as string;
+      const email = formData.get('email') as string;
+      const role = (formData.get('role') as UserRole) || 'editor';
 
-  revalidatePath('/admin/users');
-  redirect('/admin/users');
+      if (!email) {
+        return { error: '이메일 주소는 필수입니다.' };
+      }
+
+      await userRepository.createUser({ name, email, role });
+      revalidatePath('/admin/users');
+      redirect('/admin/users');
+    } else {
+      const input = inputOrPrevState as CreateUserInput;
+      await userRepository.createUser(input);
+      revalidatePath('/admin/users');
+      return { success: true };
+    }
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : '사용자 생성 중 오류가 발생했습니다.';
+    return { success: false, error: errorMsg, message: errorMsg };
+  }
 }
 
-export async function deleteUserAction(formData: FormData) {
-  const userId = formData.get('userId') as string;
-
-  if (!userId) return;
-
+export async function updateUserAction(input: UpdateUserInput) {
   try {
+    await userRepository.updateUser(input);
+    revalidatePath('/admin/users');
+    return { success: true };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : '사용자 정보 수정 실패';
+    return { success: false, message: errorMsg };
+  }
+}
+
+export async function deleteUserAction(idOrFormData: string | FormData) {
+  try {
+    let userId: string;
+    if (idOrFormData instanceof FormData) {
+      userId = idOrFormData.get('userId') as string;
+    } else {
+      userId = idOrFormData;
+    }
+
+    if (!userId) return { success: false, message: '사용자 ID가 필요합니다.' };
+
     await userRepository.deleteUser(userId);
     revalidatePath('/admin/users');
-  } catch (err: any) {
-    console.error('Failed to delete user:', err);
+    return { success: true };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : '사용자 삭제 실패';
+    return { success: false, message: errorMsg };
   }
 }
 
@@ -74,7 +95,8 @@ export async function updateSelfProfileAction(formData: FormData) {
 
     revalidatePath('/', 'layout');
     return { success: true, message: '프로필 정보가 성공적으로 수정되었습니다.' };
-  } catch (err: any) {
-    return { success: false, error: err.message || '프로필 수정 중 오류가 발생했습니다.' };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : '프로필 수정 중 오류가 발생했습니다.';
+    return { success: false, error: errorMsg };
   }
 }

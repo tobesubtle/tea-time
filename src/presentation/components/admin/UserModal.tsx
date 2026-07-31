@@ -3,7 +3,7 @@
 import { useState, useEffect, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { User, UserRole } from '@/domain/entities/User';
-import { createUserAction, updateUserAction } from '@/app/auth/actions';
+import { createUserAction, updateUserAction } from '@/src/presentation/actions/userActions';
 import { Modal } from '@/presentation/components/common/Modal';
 import { Button } from '@/presentation/components/common/Button';
 

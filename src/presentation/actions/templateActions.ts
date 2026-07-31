@@ -2,8 +2,8 @@
 
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
-import { createClient } from '@/infrastructure/supabase/server';
-import { SupabaseTemplateRepository } from '@/infrastructure/repositories/SupabaseTemplateRepository';
+import { createClient } from '@/src/infrastructure/supabase/server';
+import { SupabaseTemplateRepository } from '@/src/infrastructure/repositories/SupabaseTemplateRepository';
 
 const templateRepository = new SupabaseTemplateRepository();
 
@@ -24,7 +24,7 @@ async function verifyCanManageTemplate() {
   return user;
 }
 
-export async function createTemplateAction(prevState: any, formData: FormData) {
+export async function createTemplateAction(prevState: unknown, formData: FormData) {
   const title = formData.get('title') as string;
   const aiModel = formData.get('aiModel') as string;
   const category = formData.get('category') as string;
@@ -44,8 +44,9 @@ export async function createTemplateAction(prevState: any, formData: FormData) {
       description,
       content,
     });
-  } catch (err: any) {
-    return { error: err.message || '템플릿 생성 실패' };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : '템플릿 생성 실패';
+    return { error: errorMsg };
   }
 
   revalidatePath('/templates');
@@ -63,8 +64,9 @@ export async function updateTemplateAction(id: string, data: { title?: string; d
     revalidatePath('/prompts/create');
     revalidatePath('/templates');
     return { success: true };
-  } catch (err: any) {
-    return { success: false, message: err.message || '템플릿 수정 실패' };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : '템플릿 수정 실패';
+    return { success: false, message: errorMsg };
   }
 }
 
@@ -79,8 +81,9 @@ export async function deleteTemplateAction(id: string) {
     revalidatePath('/prompts/create');
     revalidatePath('/templates');
     return { success: true };
-  } catch (err: any) {
-    return { success: false, message: err.message || '템플릿 삭제 실패' };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : '템플릿 삭제 실패';
+    return { success: false, message: errorMsg };
   }
 }
 
@@ -107,7 +110,8 @@ export async function duplicateTemplateAction(id: string) {
     revalidatePath('/prompts/create');
     revalidatePath('/templates');
     return { success: true, newTemplateId: newTemplate.id };
-  } catch (err: any) {
-    return { success: false, message: err.message || '템플릿 복제 실패' };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : '템플릿 복제 실패';
+    return { success: false, message: errorMsg };
   }
 }

@@ -4,12 +4,10 @@ import { Suspense } from 'react';
 import { createClient } from '@/infrastructure/supabase/server';
 import { SupabaseTemplateRepository } from '@/infrastructure/repositories/SupabaseTemplateRepository';
 import { SupabasePromptHistoryRepository } from '@/infrastructure/repositories/SupabasePromptHistoryRepository';
-import { getActiveGeminiModels } from '@/infrastructure/supabase/getGeminiModels';
 import Header from '@/presentation/components/Header';
 import TemplatePreview from '@/presentation/components/TemplatePreview';
 import { TemplateActionHeader } from '@/presentation/components/TemplateActionHeader';
 import { HistoryList } from '@/presentation/components/HistoryList';
-import { ModelSelectAccordion } from '@/presentation/components/ModelSelectAccordion';
 import { FileUploadSection } from '@/presentation/components/FileUploadSection';
 import { preparePromptAction } from '@/presentation/actions/promptActions';
 
@@ -29,9 +27,6 @@ export default async function PromptCreatePage({ searchParams }: PageProps) {
 
   const allTemplates = await templateRepo.getTemplates();
   const selectedTemplate = allTemplates.find((t) => t.id === params.templateId) || allTemplates[0];
-
-  // DB에서 활성화된 Gemini 최신 모델 목록 가져오기
-  const availableModels = await getActiveGeminiModels();
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -65,7 +60,7 @@ export default async function PromptCreatePage({ searchParams }: PageProps) {
           <div>
             <h2 className="font-bold text-2xl text-[#0b1c30]">프롬프트 작성</h2>
             <p className="text-xs text-[#45474c] mt-1">
-              선택한 템플릿의 변수 값을 입력하고 AI 모델을 지정하여 프롬프트를 완성하세요.
+              선택한 템플릿의 변수 값을 입력하고 프롬프트를 완성하세요.
             </p>
           </div>
 
@@ -88,6 +83,7 @@ export default async function PromptCreatePage({ searchParams }: PageProps) {
             <form action={preparePromptAction} className="space-y-6">
               <input type="hidden" name="templateId" value={selectedTemplate.id} />
               <input type="hidden" name="templateContent" value={selectedTemplate.content} />
+              <input type="hidden" name="aiModel" value={selectedTemplate.aiModel || 'gemini-3.6-flash'} />
 
               {/* 프롬프트 제목 (필수 항목) */}
               <div className="bg-white border border-[#c5c6cd]/40 rounded-2xl p-5 shadow-sm space-y-2">
@@ -151,20 +147,17 @@ export default async function PromptCreatePage({ searchParams }: PageProps) {
 
               {/* 파일 첨부 (로컬 / 구글 드라이브) */}
               <FileUploadSection />
-              <HistoryList 
-                recentHistory={recentHistory as any} 
-                selectedTemplate={selectedTemplate} 
-                selectedHistoryId={selectedHistory?.id} 
+              <HistoryList
+                recentHistory={recentHistory as any}
+                selectedTemplate={selectedTemplate}
+                selectedHistoryId={selectedHistory?.id}
               />
-
-              {/* 최하단 위치: AI 모델 선택 (Gemini 3.5 Flash-Lite 기본 선택, 상세 감춤) */}
-              <ModelSelectAccordion models={availableModels} defaultModelId="gemini-3.5-flash-lite" />
 
               {/* Action Button with Loading Spinner */}
               <SubmitButtonWithLoading
-                label="완성된 프롬프트 검토 및 실행"
+                label="프롬프트 생성"
                 loadingLabel="프롬프트 구성 중..."
-                overlayMessage="완성된 프롬프트를 작성 중입니다..."
+                overlayMessage="프롬프트를 작성 중입니다..."
                 icon="arrow_forward"
               />
             </form>

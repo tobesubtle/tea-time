@@ -33,13 +33,6 @@ export class SupabaseAuthRepository implements AuthRepository {
   async logout(): Promise<void> {
     const supabase = await createClient();
     await supabase.auth.signOut();
-    
-    // 이전에 남아있을 수 있는 mock 쿠키도 함께 삭제
-    const { cookies } = await import('next/headers');
-    const cookieStore = await cookies();
-    cookieStore.delete('auth_token');
-    cookieStore.delete('user_email');
-    cookieStore.delete('user_role');
   }
 
   async getCurrentUser(): Promise<User | null> {

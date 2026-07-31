@@ -4,7 +4,7 @@ import { useState, useEffect, useTransition } from 'react';
 import { User } from '@/domain/entities/User';
 import { Pencil, Trash2, UserPlus } from 'lucide-react';
 import { UserModal } from './UserModal';
-import { deleteUserAction } from '@/app/auth/actions';
+import { deleteUserAction } from '@/src/presentation/actions/userActions';
 
 interface UserListProps {
   initialUsers: User[];
