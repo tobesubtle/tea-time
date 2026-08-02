@@ -73,24 +73,24 @@
 ### 4.1 계층별 폴더 구조 및 역할
 ```text
 src/
-├── domain/                 # [Domain Layer] 외부 기술에 독립적인 순수 비즈니스 로직
-│   ├── entities/           # 데이터 엔티티 (User, PromptTemplate, QuotaLog 등)
-│   ├── repositories/       # 저장소 추상 인터페이스 (ProductRepository 등)
-│   └── usecases/           # 비즈니스 오케스트레이션 (ExecutePromptUseCase 등)
-├── infrastructure/         # [Infrastructure Layer] 외부 기술 구현체
-│   ├── api/                # Gemini API 및 Google Drive API 래퍼
-│   ├── db/                 # Supabase DB 연결 및 쿼리
-│   └── repositories/       # domain/repositories 인터페이스의 실제 구현체
-├── presentation/           # [Presentation Layer] UI 계층
-│   ├── components/         # 순수 React 컴포넌트 & 원자 컴포넌트
-│   ├── hooks/              # Usecase 연동 커스텀 훅
-│   └── store/              # Zustand 클라이언트 전역 UI 상태
-└── shared/                 # 공통 유틸리티, 상수, 에러 객체
-app/                        # [Framework Layer] Next.js App Router 라우트 (진입점)
+├── domain/                 # [Domain Layer] 외부 기술에 독립적인 순수 비즈니스 모델 및 규약
+│   ├── entities/           # 비즈니스 데이터 모델 (User, PromptTemplate, PromptHistory, QuotaErrorLog, CronLog 등)
+│   └── repositories/       # 저장소 추상 인터페이스 (TemplateRepository, PromptHistoryRepository, AuthRepository 등)
+├── infrastructure/         # [Infrastructure Layer] 외부 시스템, DB 및 API 구현체
+│   ├── api/                # 외부 AI API 래퍼 (geminiClient.ts)
+│   ├── email/              # 백그라운드 이메일 발송 엔진 (emailService.ts)
+│   ├── repositories/       # domain/repositories 추상 인터페이스의 실제 구현체 (Supabase...Repository)
+│   └── supabase/           # Supabase SSR 설정 및 동적 모델 수집 유틸리티 (server.ts, client.ts 등)
+└── presentation/           # [Presentation Layer] UI, 화면 제어 및 서버 액션 (유스케이스 오케스트레이션)
+    ├── actions/            # Next.js Server Actions (유스케이스 오케스트레이션: promptActions, userActions 등)
+    ├── components/         # React UI 컴포넌트 (PromptRunActions, ModelSelectAccordion, ProfileModal 등)
+    └── hooks/              # 커스텀 React 훅 (useGooglePicker.ts 등)
+app/                        # [Framework Layer] Next.js App Router 진입점 (Routing 및 Page 조합)
 ```
 
-### 4.2 의존성 역전 원칙 (Dependency Inversion Principle) 적용 사례
-Domain 계층의 `Repository Interface`를 작성하고, Infrastructure 계층에서 이를 구현(`implements`)함으로써 도메인 로직이 특정 DB(Supabase)나 외부 API에 직접 의존하지 않도록 설계했습니다. 이를 통해 DB 변경이나 외부 라이브러리 교체 시 도메인 영역의 코드 수정 없이 유연한 확장과 단위 테스트(Mocking)가 가능해졌습니다.
+### 4.2 의존성 역전 원칙 (DIP) 및 실용적 아키텍처 패턴 적용 사례
+* **서버 액션(Server Actions) 기반 유스케이스 구현**: 별도의 `usecases/` 클래스 폴더 보일러플레이트를 불필요하게 늘리는 대신, Next.js App Router 환경에 맞춰 `src/presentation/actions/` (예: `promptActions.ts`)가 Domain Interface와 외부 API를 직접 오케스트레이션하는 **실용적 클린 아키텍처(Pragmatic Clean Architecture)** 패턴을 적용했습니다.
+* **인프라 독립성**: Domain 계층의 `Repository Interface`를 작성하고, Infrastructure 계층에서 이를 구현(`implements`)함으로써 도메인 로직이 특정 DB(Supabase)나 외부 API에 직접 의존하지 않도록 설계했습니다. 이를 통해 DB 변경이나 외부 라이브러리 교체 시 도메인 영역 코드 수정 없이 유연한 확장과 단위 테스트(Mocking)가 가용합니다.
 
 ---
 
