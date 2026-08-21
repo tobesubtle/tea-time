@@ -6,7 +6,7 @@ export default async function HomePage() {
   const currentUser = await authRepo.getCurrentUser();
 
   if (currentUser) {
-    redirect('/admin/users');
+    redirect('/templates');
   } else {
     redirect('/login');
   }

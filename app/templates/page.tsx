@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { createClient } from '@/infrastructure/supabase/server';
 import { SupabaseTemplateRepository } from '@/infrastructure/repositories/SupabaseTemplateRepository';
 import Header from '@/presentation/components/Header';
@@ -17,8 +18,12 @@ export default async function TemplatesPage({ searchParams }: PageProps) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  const userRole = user?.user_metadata?.role || user?.app_metadata?.role || 'user';
-  const userName = user?.user_metadata?.name || user?.email?.split('@')[0];
+  if (!user) {
+    redirect('/login');
+  }
+
+  const userRole = user.user_metadata?.role || user.app_metadata?.role || 'user';
+  const userName = user.user_metadata?.name || user.email?.split('@')[0];
 
   const templateRepo = new SupabaseTemplateRepository();
   const templates = await templateRepo.getTemplates(selectedCategory, searchQuery);

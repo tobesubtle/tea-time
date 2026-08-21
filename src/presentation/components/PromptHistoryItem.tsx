@@ -43,35 +43,38 @@ export default function PromptHistoryItem({ item, templateTitle }: PromptHistory
   }
 
   return (
-    <div className="relative bg-white border border-[#c5c6cd]/40 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all group space-y-3">
-      <div className="flex justify-between items-start gap-3">
-        <Link href={`/prompts/result/${item.id}`} className="flex items-center gap-3 flex-1 min-w-0">
-          <div className="w-10 h-10 rounded-xl bg-[#e5eeff] text-[#4648d4] flex items-center justify-center font-bold shrink-0">
+    <div className="relative bg-white border border-[#c5c6cd]/40 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-md transition-all group space-y-3">
+      <div className="flex items-start justify-between gap-3">
+        <Link href={`/prompts/result/${item.id}`} className="flex items-start gap-3 flex-1 min-w-0">
+          <div className="w-10 h-10 rounded-xl bg-[#e5eeff] text-[#4648d4] flex items-center justify-center font-bold shrink-0 mt-0.5">
             <span className="material-symbols-outlined">description</span>
           </div>
-          <div className="min-w-0 flex-1">
-            <h3 className="font-bold text-base text-[#0b1c30] group-hover:text-[#4648d4] transition-colors truncate">
-              {item.title || '제목 없음'}
-            </h3>
-            <span className="text-xs text-[#45474c]">
-              템플릿: {templateTitle || (item.templateId ? '(삭제된 템플릿)' : '일반')}
-            </span>
+          <div className="min-w-0 flex-1 space-y-1">
+            {item.title ? (
+              <>
+                <h3 className="font-bold text-sm sm:text-base text-[#0b1c30] group-hover:text-[#4648d4] transition-colors leading-snug break-keep">
+                  {item.title}
+                </h3>
+                <p className="text-xs text-slate-500 font-medium break-keep">
+                  <span className="text-slate-400 font-normal">템플릿:</span> {templateTitle || (item.templateId ? '(삭제된 템플릿)' : '일반')}
+                </p>
+              </>
+            ) : (
+              <h3 className="font-bold text-sm sm:text-base text-[#0b1c30] group-hover:text-[#4648d4] transition-colors leading-snug break-keep">
+                <span className="text-slate-400 font-normal">템플릿:</span> {templateTitle || (item.templateId ? '(삭제된 템플릿)' : '일반')}
+              </h3>
+            )}
           </div>
         </Link>
 
-        <div className="flex items-center gap-2 shrink-0">
-          <span className="text-xs font-mono px-2.5 py-1 rounded-md bg-[#e8ddff] text-[#21005e] font-medium">
-            {item.aiModel || 'gemini-3.6-flash'}
-          </span>
-          <button
-            type="button"
-            onClick={handleDelete}
-            title="삭제"
-            className="p-1.5 text-zinc-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors flex items-center justify-center"
-          >
-            <span className="material-symbols-outlined text-lg">delete</span>
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={handleDelete}
+          title="삭제"
+          className="p-1.5 text-zinc-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors flex items-center justify-center shrink-0"
+        >
+          <span className="material-symbols-outlined text-lg">delete</span>
+        </button>
       </div>
 
       <Link href={`/prompts/result/${item.id}`} className="block space-y-3">

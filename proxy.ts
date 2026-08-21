@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let response = NextResponse.next({
     request: {
       headers: request.headers,
@@ -9,13 +9,16 @@ export async function middleware(request: NextRequest) {
   });
 
   let hasSupabaseUser = false;
-  let supabaseRole = 'user'; // 로그인한 세션의 기본 role fallback을 user로 설정
+  let supabaseRole = 'user';
 
-  if (process.env.NEXT_PUBLIC_SUPABASE_URL && !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('mock')) {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || '';
+
+  if (supabaseUrl && !supabaseUrl.includes('mock') && supabaseAnonKey) {
     try {
       const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || '',
+        supabaseUrl,
+        supabaseAnonKey,
         {
           cookies: {
             getAll() {
@@ -34,8 +37,8 @@ export async function middleware(request: NextRequest) {
         }
       );
 
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (user && !error) {
         hasSupabaseUser = true;
         supabaseRole = user.user_metadata?.role || user.app_metadata?.role || 'user';
       }
@@ -50,10 +53,11 @@ export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   const isAuthRoute = pathname.startsWith('/login');
+  const isProtectedRoute = pathname.startsWith('/admin') || pathname.startsWith('/prompts') || pathname.startsWith('/templates');
   const isAdminRoute = pathname.startsWith('/admin');
 
-  // 1. 비로그인 유저가 /admin 접근 시 /login으로 이동
-  if (isAdminRoute && !isAuthenticated) {
+  // 1. 비로그인 유저가 보호된 경로(/admin, /prompts, /templates) 접근 시 /login으로 이동
+  if (isProtectedRoute && !isAuthenticated) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
@@ -71,5 +75,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/', '/admin/:path*', '/login'],
+  matcher: ['/', '/admin/:path*', '/login', '/prompts/:path*', '/templates/:path*'],
 };

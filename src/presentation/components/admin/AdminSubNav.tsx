@@ -3,7 +3,7 @@
 import Link from 'next/link';
 
 interface AdminSubNavProps {
-  activeTab: 'users' | 'usage' | 'prompts' | 'cron' | 'quota' | 'report';
+  activeTab: 'users' | 'usage' | 'prompts' | 'cron' | 'quota' | 'report' | 'email';
 }
 
 export function AdminSubNav({ activeTab }: AdminSubNavProps) {
@@ -59,6 +59,16 @@ export function AdminSubNav({ activeTab }: AdminSubNavProps) {
           }`}
         >
           <span>쿼터/에러 모니터링</span>
+        </Link>
+        <Link
+          href="/admin/email"
+          className={`py-3.5 border-b-2 transition-all whitespace-nowrap flex items-center gap-1.5 ${
+            activeTab === 'email'
+              ? 'border-indigo-600 dark:border-indigo-400 text-indigo-600 dark:text-indigo-400 font-bold'
+              : 'border-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'
+          }`}
+        >
+          <span>📧 이메일 발송</span>
         </Link>
         <Link
           href="/admin/report"

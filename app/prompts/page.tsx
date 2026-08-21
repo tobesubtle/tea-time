@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { createClient } from '@/infrastructure/supabase/server';
 import { SupabaseTemplateRepository } from '@/infrastructure/repositories/SupabaseTemplateRepository';
 import { SupabasePromptHistoryRepository } from '@/infrastructure/repositories/SupabasePromptHistoryRepository';
@@ -23,8 +24,12 @@ export default async function PromptsListPage({ searchParams }: PageProps) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  const userRole = user?.user_metadata?.role || user?.app_metadata?.role || 'user';
-  const userName = user?.user_metadata?.name;
+  if (!user) {
+    redirect('/login');
+  }
+
+  const userRole = user.user_metadata?.role || user.app_metadata?.role || 'user';
+  const userName = user.user_metadata?.name;
 
   const templateRepo = new SupabaseTemplateRepository();
   const allTemplates = await templateRepo.getTemplates();

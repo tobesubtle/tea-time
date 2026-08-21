@@ -8,12 +8,19 @@ export const metadata = {
 };
 
 export default async function LoginPage() {
-  const authRepo = new SupabaseAuthRepository();
-  const currentUser = await authRepo.getCurrentUser();
+  try {
+    const authRepo = new SupabaseAuthRepository();
+    const currentUser = await authRepo.getCurrentUser();
 
-  // 이미 로그인되어 있는 경우 초기화면(템플릿 목록)으로 이동
-  if (currentUser) {
-    redirect('/templates');
+    // 이미 로그인되어 있는 경우 초기화면(템플릿 목록)으로 이동
+    if (currentUser) {
+      redirect('/templates');
+    }
+  } catch (e: any) {
+    if (e?.digest?.startsWith('NEXT_REDIRECT')) {
+      throw e;
+    }
+    console.error('LoginPage auth check error:', e);
   }
 
   return (
